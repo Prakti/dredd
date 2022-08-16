@@ -2,13 +2,14 @@
 
 Dredd judges structs; it's a validator.
 
-Dredd was forked from Justify
+Dredd was forked from [Justify][2]
 
 Inspired heavily by [Ecto.Changeset][1], Dredd allows you to pipe a plain map
 into a series of validation functions using a simple and familiar API. No
 schemas or casting required.
 
 [1]: https://hexdocs.pm/ecto/Ecto.Changeset.html
+[2]: https://github.com/malomohq/justify
 
 ### Example
 
@@ -77,7 +78,8 @@ dataset.valid? #=> false
 
 ## Copyright and License
 
-Copyright (c) 2021 Anthoniy Smitch
+Copyright (c) 2021 Anthoniy Smith
+
 Copyright (c) 2022 Marcus Autenrieth
 
 Dredd is licensed under the MIT License, see LICENSE.md for details.
