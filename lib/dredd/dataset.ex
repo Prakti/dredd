@@ -1,4 +1,8 @@
 defmodule Dredd.Dataset do
+  @moduledoc """
+  This is the internal datastructure in which the validators accumulate any validation errors.
+  """
+
   defstruct data: %{}, errors: [], valid?: true
 
   @type error_t :: {String.t(), Keyword.t()}

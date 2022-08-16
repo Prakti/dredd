@@ -4,43 +4,89 @@ defmodule Dredd.Validators.LengthTest do
 
   describe "validate_length/3 with strings as input" do
     # TODO: 2020-03-21 Consider positive cases below for string and all count pattern
-    test "does not add an error if value's length matches `:is` exactly" do
-      field = :field
-      value = "é"
-      data = Map.new([{field, value}])
-      count = length(String.graphemes(value))
 
-      assert %Dredd.Dataset{
-               data: ^data,
-               errors: [],
-               valid?: true
-             } = Dredd.validate_length(data, field, is: count)
+    property "does not add an error if value's length matches `:is` exactly" do
+      check all(
+              value <- string(:printable, min_length: 1),
+              count <- member_of([:graphemes, :codepoints, :bytes]),
+              field <- atom(:alphanumeric)
+            ) do
+        data = Map.new([{field, value}])
+
+        correct_length =
+          case count do
+            :graphemes ->
+              length(String.graphemes(value))
+
+            :codepoints ->
+              length(String.codepoints(value))
+
+            :bytes ->
+              byte_size(value)
+          end
+
+        assert %Dredd.Dataset{
+                 data: ^data,
+                 errors: [],
+                 valid?: true
+               } = Dredd.validate_length(data, field, is: correct_length, count: count)
+      end
     end
 
-    test "does not add an error if value has a length less than `:min`" do
-      field = :field
-      value = "é"
-      data = Map.new([{field, value}])
-      count = length(String.graphemes(value)) - 1
+    property "does not add an error if value's length is greater than `:min`" do
+      check all(
+              value <- string(:printable, min_length: 2),
+              count <- member_of([:graphemes, :codepoints, :bytes]),
+              field <- atom(:alphanumeric)
+            ) do
+        data = Map.new([{field, value}])
 
-      assert %Dredd.Dataset{
-               data: ^data,
-               errors: [],
-               valid?: true
-             } = Dredd.validate_length(data, field, min: count)
+        min_length =
+          case count do
+            :graphemes ->
+              length(String.graphemes(value)) - 1
+
+            :codepoints ->
+              length(String.codepoints(value)) - 1
+
+            :bytes ->
+              byte_size(value) - 1
+          end
+
+        assert %Dredd.Dataset{
+                 data: ^data,
+                 errors: [],
+                 valid?: true
+               } = Dredd.validate_length(data, field, min: min_length, count: count)
+      end
     end
 
-    test "does not add an error if value has a length greater than `:max`" do
-      field = :field
-      value = "é"
-      data = Map.new([{field, value}])
-      count = length(String.graphemes(value)) + 1
+    property "does not add an error if value's length is less than `:max`" do
+      check all(
+              value <- string(:printable, min_length: 1),
+              count <- member_of([:graphemes, :codepoints, :bytes]),
+              field <- atom(:alphanumeric)
+            ) do
+        data = Map.new([{field, value}])
 
-      assert %Dredd.Dataset{
-               data: ^data,
-               errors: [],
-               valid?: true
-             } = Dredd.validate_length(data, field, max: count)
+        max_length =
+          case count do
+            :graphemes ->
+              length(String.graphemes(value)) + 1
+
+            :codepoints ->
+              length(String.codepoints(value)) + 1
+
+            :bytes ->
+              byte_size(value) + 1
+          end
+
+        assert %Dredd.Dataset{
+                 data: ^data,
+                 errors: [],
+                 valid?: true
+               } = Dredd.validate_length(data, field, max: max_length, count: count)
+      end
     end
 
     property "adds an error if value's length does not exactly match `:is`" do
@@ -58,17 +104,17 @@ defmodule Dredd.Validators.LengthTest do
             wrong_length + 1
           end
 
-        result = Dredd.validate_length(data, field, is: wrong_length)
+        expected_errors = [
+          {field,
+           {"should be %{count} character(s)",
+            count: wrong_length, kind: :is, type: :string, validation: :length}}
+        ]
 
-        assert %Dredd.Dataset{} = result
-        assert result.valid? == false
-        assert result.data == data
-
-        assert result.errors == [
-                 {field,
-                  {"should be %{count} character(s)",
-                   count: wrong_length, kind: :is, type: :string, validation: :length}}
-               ]
+        assert %Dredd.Dataset{
+                 data: ^data,
+                 errors: ^expected_errors,
+                 valid?: false
+               } = Dredd.validate_length(data, field, is: wrong_length)
       end
     end
 
@@ -342,7 +388,7 @@ defmodule Dredd.Validators.LengthTest do
       end
     end
 
-    test "adds an error if value is a list with more items than `:max`" do
+    propery "adds an error if value is a list with more items than `:max`" do
       check all(
               value <- list_of(term(), min_length: 5),
               field <- atom(:alphanumeric)

@@ -1,12 +1,15 @@
 defmodule Dredd do
   @moduledoc """
-  Dredd judges your datastructures, it's a validator forked from ustify
+  Dredd judges structs; it's a validator.
+
+  Dredd was forked from [Justify][2]
 
   Inspired heavily by [Ecto.Changeset][1], Dredd allows you to pipe a plain map
   into a series of validation functions using a simple and familiar API. No
   schemas or casting required.
 
   [1]: https://hexdocs.pm/ecto/Ecto.Changeset.html
+  [2]: https://github.com/malomohq/justify
 
   ### Example
 
