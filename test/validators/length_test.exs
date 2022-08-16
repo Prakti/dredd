@@ -1,4 +1,4 @@
-defmodule Justify.Validators.LengthTest do
+defmodule Dredd.Validators.LengthTest do
   use ExUnit.Case, async: true
   use ExUnitProperties
 
@@ -10,11 +10,11 @@ defmodule Justify.Validators.LengthTest do
       data = Map.new([{field, value}])
       count = length(String.graphemes(value))
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_length(data, field, is: count)
+             } = Dredd.validate_length(data, field, is: count)
     end
 
     test "does not add an error if value has a length less than `:min`" do
@@ -23,11 +23,11 @@ defmodule Justify.Validators.LengthTest do
       data = Map.new([{field, value}])
       count = length(String.graphemes(value)) - 1
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_length(data, field, min: count)
+             } = Dredd.validate_length(data, field, min: count)
     end
 
     test "does not add an error if value has a length greater than `:max`" do
@@ -36,11 +36,11 @@ defmodule Justify.Validators.LengthTest do
       data = Map.new([{field, value}])
       count = length(String.graphemes(value)) + 1
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_length(data, field, max: count)
+             } = Dredd.validate_length(data, field, max: count)
     end
 
     property "adds an error if value's length does not exactly match `:is`" do
@@ -58,9 +58,9 @@ defmodule Justify.Validators.LengthTest do
             wrong_length + 1
           end
 
-        result = Justify.validate_length(data, field, is: wrong_length)
+        result = Dredd.validate_length(data, field, is: wrong_length)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -81,9 +81,9 @@ defmodule Justify.Validators.LengthTest do
         data = Map.new([{field, value}])
         count = length(String.graphemes(value)) + 1 + abs(excess_length)
 
-        result = Justify.validate_length(data, field, min: count)
+        result = Dredd.validate_length(data, field, min: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -110,9 +110,9 @@ defmodule Justify.Validators.LengthTest do
             List.first(Enum.take(integer(1..(count - 2)), 1))
           end
 
-        result = Justify.validate_length(data, field, max: count)
+        result = Dredd.validate_length(data, field, max: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -139,9 +139,9 @@ defmodule Justify.Validators.LengthTest do
             wrong_length + 1
           end
 
-        result = Justify.validate_length(data, field, count: :codepoints, is: wrong_length)
+        result = Dredd.validate_length(data, field, count: :codepoints, is: wrong_length)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -162,9 +162,9 @@ defmodule Justify.Validators.LengthTest do
         data = Map.new([{field, value}])
         count = length(String.codepoints(value)) + 1 + abs(excess_length)
 
-        result = Justify.validate_length(data, field, count: :codepoints, min: count)
+        result = Dredd.validate_length(data, field, count: :codepoints, min: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -191,9 +191,9 @@ defmodule Justify.Validators.LengthTest do
             List.first(Enum.take(integer(1..(count - 2)), 1))
           end
 
-        result = Justify.validate_length(data, field, count: :codepoints, max: count)
+        result = Dredd.validate_length(data, field, count: :codepoints, max: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -221,9 +221,9 @@ defmodule Justify.Validators.LengthTest do
             wrong_length
           end
 
-        result = Justify.validate_length(data, field, count: :bytes, is: count)
+        result = Dredd.validate_length(data, field, count: :bytes, is: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -244,9 +244,9 @@ defmodule Justify.Validators.LengthTest do
         data = Map.new([{field, value}])
         count = byte_size(value) + 1 + abs(excess_length)
 
-        result = Justify.validate_length(data, field, count: :bytes, min: count)
+        result = Dredd.validate_length(data, field, count: :bytes, min: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -273,9 +273,9 @@ defmodule Justify.Validators.LengthTest do
             List.first(Enum.take(integer(1..(count - 2)), 1))
           end
 
-        result = Justify.validate_length(data, field, count: :bytes, max: count)
+        result = Dredd.validate_length(data, field, count: :bytes, max: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -305,9 +305,9 @@ defmodule Justify.Validators.LengthTest do
             wrong_length
           end
 
-        result = Justify.validate_length(data, field, count: :bytes, is: count)
+        result = Dredd.validate_length(data, field, count: :bytes, is: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -328,9 +328,9 @@ defmodule Justify.Validators.LengthTest do
         data = Map.new([{field, value}])
         count = length(value) + 1 + excess_length
 
-        result = Justify.validate_length(data, field, count: :bytes, min: count)
+        result = Dredd.validate_length(data, field, count: :bytes, min: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -357,9 +357,9 @@ defmodule Justify.Validators.LengthTest do
             List.first(Enum.take(integer(1..(count - 2)), 1))
           end
 
-        result = Justify.validate_length(data, field, count: :bytes, max: count)
+        result = Dredd.validate_length(data, field, count: :bytes, max: count)
 
-        assert %Justify.Dataset{} = result
+        assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
 
@@ -379,11 +379,11 @@ defmodule Justify.Validators.LengthTest do
         data = Map.new([{field, value}])
         count = length(value)
 
-        assert %Justify.Dataset{
+        assert %Dredd.Dataset{
                  data: ^data,
                  errors: [],
                  valid?: true
-               } = Justify.validate_length(data, field, is: count)
+               } = Dredd.validate_length(data, field, is: count)
       end
     end
 
@@ -402,11 +402,11 @@ defmodule Justify.Validators.LengthTest do
             List.first(Enum.take(integer(1..(count - 2)), 1))
           end
 
-        assert %Justify.Dataset{
+        assert %Dredd.Dataset{
                  data: ^data,
                  errors: [],
                  valid?: true
-               } = Justify.validate_length(data, field, min: count)
+               } = Dredd.validate_length(data, field, min: count)
       end
     end
 
@@ -419,11 +419,11 @@ defmodule Justify.Validators.LengthTest do
         data = Map.new([{field, value}])
         count = length(value) + excess_length
 
-        assert %Justify.Dataset{
+        assert %Dredd.Dataset{
                  data: ^data,
                  errors: [],
                  valid?: true
-               } = Justify.validate_length(data, field, max: count)
+               } = Dredd.validate_length(data, field, max: count)
       end
     end
   end
@@ -433,22 +433,22 @@ defmodule Justify.Validators.LengthTest do
       field = :field
       data = Map.new([{field, nil}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_length(data, field, is: 1)
+             } = Dredd.validate_length(data, field, is: 1)
     end
 
     test "does not add an error if value is an empty string" do
       field = :field
       data = Map.new([{field, ""}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_length(data, field, is: 1)
+             } = Dredd.validate_length(data, field, is: 1)
     end
 
     property "can correctly handle arbitrary data" do
@@ -459,17 +459,17 @@ defmodule Justify.Validators.LengthTest do
         data = Map.new([{field, value}])
 
         if (is_binary(value) and value != "") or is_list(value) do
-          assert %Justify.Dataset{
+          assert %Dredd.Dataset{
                    data: ^data,
                    valid?: false,
                    errors: _list
-                 } = Justify.validate_length(data, field, is: -1)
+                 } = Dredd.validate_length(data, field, is: -1)
         else
-          assert %Justify.Dataset{
+          assert %Dredd.Dataset{
                    data: ^data,
                    errors: [],
                    valid?: true
-                 } = Justify.validate_length(data, field, is: -1)
+                 } = Dredd.validate_length(data, field, is: -1)
         end
       end
     end
@@ -483,14 +483,14 @@ defmodule Justify.Validators.LengthTest do
       data = Map.new([{field, value}])
       count = length(String.graphemes(value)) + 1
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [
                  {^field,
                   {^message, count: ^count, kind: :is, type: :string, validation: :length}}
                ],
                valid?: false
-             } = Justify.validate_length(data, field, is: count, message: message)
+             } = Dredd.validate_length(data, field, is: count, message: message)
     end
   end
 end

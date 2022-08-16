@@ -1,10 +1,10 @@
-defmodule Justify.Validators.Confirmation do
+defmodule Dredd.Validators.Confirmation do
   @moduledoc false
 
   @default_message "does not match"
 
   def call(dataset, field, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dredd.Dataset.new(dataset)
 
     default_confirmation_field = String.to_atom("#{Atom.to_string(field)}_confirmation")
 
@@ -15,13 +15,15 @@ defmodule Justify.Validators.Confirmation do
     message = Keyword.get(opts, :message, @default_message)
 
     case Map.fetch(dataset.data, confirmation_field) do
-      { :ok, ^value } ->
+      {:ok, ^value} ->
         dataset
-      { :ok, _does_not_match } ->
-        Justify.add_error(dataset, field, message, validation: :confirmation)
+
+      {:ok, _does_not_match} ->
+        Dredd.add_error(dataset, field, message, validation: :confirmation)
+
       :error ->
         if Keyword.get(opts, :required?, false) do
-          Justify.validate_required(dataset, confirmation_field)
+          Dredd.validate_required(dataset, confirmation_field)
         else
           dataset
         end

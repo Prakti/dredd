@@ -1,4 +1,4 @@
-defmodule Justify.Validators.Length do
+defmodule Dredd.Validators.Length do
   @moduledoc false
 
   @default_message %{
@@ -20,7 +20,7 @@ defmodule Justify.Validators.Length do
   }
 
   def call(dataset, field, opts) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dredd.Dataset.new(dataset)
 
     value = Map.get(dataset.data, field) || ""
 
@@ -32,8 +32,9 @@ defmodule Justify.Validators.Length do
     case validate(value, opts) do
       nil ->
         dataset
+
       error ->
-        Justify.put_error(dataset, field, error)
+        Dredd.put_error(dataset, field, error)
     end
   end
 
@@ -45,15 +46,15 @@ defmodule Justify.Validators.Length do
     nil
   end
 
-  defp validate(value, %{ count: :codepoints } = opts) when is_binary(value) do
+  defp validate(value, %{count: :codepoints} = opts) when is_binary(value) do
     check(:string, length(String.codepoints(value)), opts)
   end
 
-  defp validate(value, %{ count: :graphemes } = opts) when is_binary(value) do
+  defp validate(value, %{count: :graphemes} = opts) when is_binary(value) do
     check(:string, length(String.graphemes(value)), opts)
   end
 
-  defp validate(value, %{ count: :bytes } = opts) when is_binary(value) do
+  defp validate(value, %{count: :bytes} = opts) when is_binary(value) do
     check(:binary, byte_size(value), opts)
   end
 
@@ -65,22 +66,22 @@ defmodule Justify.Validators.Length do
     nil
   end
 
-  defp check(type, len, %{ is: count } = opts) when len != count do
+  defp check(type, len, %{is: count} = opts) when len != count do
     message = Map.get(opts, :message, get_in(@default_message, [type, :is]))
 
-    { message, count: count, kind: :is, type: type, validation: :length }
+    {message, count: count, kind: :is, type: type, validation: :length}
   end
 
-  defp check(type, len, %{ min: count } = opts) when len < count do
+  defp check(type, len, %{min: count} = opts) when len < count do
     message = Map.get(opts, :message, get_in(@default_message, [type, :min]))
 
-    { message, count: count, kind: :min, type: type, validation: :length }
+    {message, count: count, kind: :min, type: type, validation: :length}
   end
 
-  defp check(type, len, %{ max: count } = opts) when len > count do
+  defp check(type, len, %{max: count} = opts) when len > count do
     message = Map.get(opts, :message, get_in(@default_message, [type, :max]))
 
-    { message, count: count, kind: :max, type: type, validation: :length }
+    {message, count: count, kind: :max, type: type, validation: :length}
   end
 
   defp check(_type, _len, _opts) do

@@ -1,4 +1,4 @@
-defmodule Justify.Validators.InclusionTest do
+defmodule Dredd.Validators.InclusionTest do
   use ExUnit.Case, async: true
 
   describe "validate_inclusion/4" do
@@ -7,11 +7,11 @@ defmodule Justify.Validators.InclusionTest do
       data = Map.new([{field, "value"}])
       enum = ["another value"]
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [{^field, {"is invalid", validation: :inclusion, enum: ^enum}}],
                valid?: false
-             } = Justify.validate_inclusion(data, field, enum)
+             } = Dredd.validate_inclusion(data, field, enum)
     end
 
     test "does not add an error if the value is not contained within enum" do
@@ -19,11 +19,11 @@ defmodule Justify.Validators.InclusionTest do
       value = "value"
       data = Map.new([{field, value}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_inclusion(data, field, [value])
+             } = Dredd.validate_inclusion(data, field, [value])
     end
 
     test "uses a custom error message when provided" do
@@ -32,33 +32,33 @@ defmodule Justify.Validators.InclusionTest do
       data = Map.new([{field, "value"}])
       enum = ["another value"]
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [{^field, {^message, validation: :inclusion, enum: ^enum}}],
                valid?: false
-             } = Justify.validate_inclusion(data, field, enum, message: message)
+             } = Dredd.validate_inclusion(data, field, enum, message: message)
     end
 
     test "does not add an error if value is nil" do
       field = :field
       data = Map.new([{field, nil}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_inclusion(data, field, ["a value"])
+             } = Dredd.validate_inclusion(data, field, ["a value"])
     end
 
     test "does not add an error if value is an empty string" do
       field = :field
       data = Map.new([{field, ""}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_inclusion(data, field, ["a value"])
+             } = Dredd.validate_inclusion(data, field, ["a value"])
     end
   end
 end

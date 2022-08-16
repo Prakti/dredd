@@ -1,8 +1,8 @@
-defmodule Justify do
+defmodule Dredd do
   @moduledoc """
-  Justify makes it easy to validate unstructured data.
+  Dredd judges your datastructures, it's a validator forked from ustify
 
-  Inspired heavily by [Ecto.Changeset][1], Justify allows you to pipe a plain map
+  Inspired heavily by [Ecto.Changeset][1], Dredd allows you to pipe a plain map
   into a series of validation functions using a simple and familiar API. No
   schemas or casting required.
 
@@ -12,21 +12,21 @@ defmodule Justify do
 
   ```elixir
   dataset =
-    %{email: "madebyanthony"}
-    |> Justify.validate_required(:email)
-    |> Justify.validate_format(:email, ~r/\S+@\S+/)
+    %{email: "this_is_not_an_email"}
+    |> Dredd.validate_required(:email)
+    |> Dredd.validate_format(:email, ~r/\S+@\S+/)
 
   dataset.errors #=> [email: {"has invalid format", validation: :format}]
   dataset.valid? #=> false
   ```
 
-  Each validation function will return a `Justify.Dataset` struct which can be
+  Each validation function will return a `Dredd.Dataset` struct which can be
   passed into the next function. If a validation error is encountered the dataset
   will be marked as invalid and an error will be added to the struct.
 
   ## Custom Validations
 
-  You can provide your own custom validations using the `Justify.add_error/4`
+  You can provide your own custom validations using the `Dredd.add_error/4`
   function.
 
   ### Example
@@ -34,14 +34,14 @@ defmodule Justify do
   ```elixir
   defmodule MyValidator do
     def validate_color(data, field, color) do
-      dataset = Justify.Dataset.new(data)
+      dataset = Dredd.Dataset.new(data)
 
       value = Map.get(dataset.data, :field)
 
       if value == color do
         dataset
       else
-        Justify.add_error(dataset, field, "wrong color", validation: :color)
+        Dredd.add_error(dataset, field, "wrong color", validation: :color)
       end
     end
   end
@@ -54,7 +54,7 @@ defmodule Justify do
   ```elixir
   dataset =
     %{color: "brown"}
-    |> Justify.validation_required(:color)
+    |> Dredd.validation_required(:color)
     |> MyValidator.validate_color(:color, "green")
 
   dataset.errors #=> [color: {"wrong color", validation: :color}]
@@ -63,15 +63,15 @@ defmodule Justify do
 
   ## Supported Validations
 
-  * [`validate_acceptance/3`](https://hexdocs.pm/justify/Justify.html#validate_acceptance/3)
-  * [`validate_confirmation/3`](https://hexdocs.pm/justify/Justify.html#validate_confirmation/3)
-  * [`validate_embed/3`](https://hexdocs.pm/justify/Justify.html#validate_embed/3)
-  * [`validate_exclusion/4`](https://hexdocs.pm/justify/Justify.html#validate_exclusion/4)
-  * [`validate_format/4`](https://hexdocs.pm/justify/Justify.html#validate_format/4)
-  * [`validate_inclusion/4`](https://hexdocs.pm/justify/Justify.html#validate_inclusion/4)
-  * [`validate_length/3`](https://hexdocs.pm/justify/Justify.html#validate_length/3)
-  * [`validate_required/3`](https://hexdocs.pm/justify/Justify.html#validate_required/3)
-  * [`validate_type/4`](https://hexdocs.pm/justify/Justify.html#validate_type/4)
+  * [`validate_acceptance/3`](https://hexdocs.pm/dredd/Dredd.html#validate_acceptance/3)
+  * [`validate_confirmation/3`](https://hexdocs.pm/dredd/Dredd.html#validate_confirmation/3)
+  * [`validate_embed/3`](https://hexdocs.pm/dredd/Dredd.html#validate_embed/3)
+  * [`validate_exclusion/4`](https://hexdocs.pm/dredd/Dredd.html#validate_exclusion/4)
+  * [`validate_format/4`](https://hexdocs.pm/dredd/Dredd.html#validate_format/4)
+  * [`validate_inclusion/4`](https://hexdocs.pm/dredd/Dredd.html#validate_inclusion/4)
+  * [`validate_length/3`](https://hexdocs.pm/dredd/Dredd.html#validate_length/3)
+  * [`validate_required/3`](https://hexdocs.pm/dredd/Dredd.html#validate_required/3)
+  * [`validate_type/4`](https://hexdocs.pm/dredd/Dredd.html#validate_type/4)
   """
 
   @type type_t ::
@@ -89,9 +89,9 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "must be accepted"
   """
-  @spec validate_acceptance(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_acceptance(map, atom, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_acceptance(dataset, field, opts \\ []),
-    to: Justify.Validators.Acceptance,
+    to: Dredd.Validators.Acceptance,
     as: :call
 
   @doc """
@@ -111,9 +111,9 @@ defmodule Justify do
   * `:message` - error message, defaults to "does not match"
   * `:required?` - whether the confirmation field must contain a value
   """
-  @spec validate_confirmation(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_confirmation(map, atom, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_confirmation(dataset, field, opts \\ []),
-    to: Justify.Validators.Confirmation,
+    to: Dredd.Validators.Confirmation,
     as: :call
 
   @doc """
@@ -123,16 +123,16 @@ defmodule Justify do
 
   ## Example
 
-      validator = fn(metadata) -> Justify.validate_required(metadata, :key) end
+      validator = fn(metadata) -> Dredd.validate_required(metadata, :key) end
 
       data = %{metadata: [%{value: "a value"}]}
 
       validate_embed(data, :metadata, validator)
-      #> %Justify.Dataset{errors: [metadata: [[key: {"can't be blank", validation: :required}]]], valid?: false}
+      #> %Dredd.Dataset{errors: [metadata: [[key: {"can't be blank", validation: :required}]]], valid?: false}
   """
-  @spec validate_embed(map, atom, fun) :: Justify.Dataset.t()
+  @spec validate_embed(map, atom, fun) :: Dredd.Dataset.t()
   defdelegate validate_embed(dataset, field, validator),
-    to: Justify.Validators.Embed,
+    to: Dredd.Validators.Embed,
     as: :call
 
   @doc """
@@ -143,9 +143,9 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "is reserved"
   """
-  @spec validate_exclusion(map, atom, Enum.t(), Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_exclusion(map, atom, Enum.t(), Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_exclusion(dataset, field, enum, opts \\ []),
-    to: Justify.Validators.Exclusion,
+    to: Dredd.Validators.Exclusion,
     as: :call
 
   @doc """
@@ -155,9 +155,9 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "has invalid format"
   """
-  @spec validate_format(map, atom, Regex.t(), Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_format(map, atom, Regex.t(), Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_format(dataset, field, format, opts \\ []),
-    to: Justify.Validators.Format,
+    to: Dredd.Validators.Format,
     as: :call
 
   @doc """
@@ -168,9 +168,9 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "is invalid"
   """
-  @spec validate_inclusion(map, atom, Enum.t(), Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_inclusion(map, atom, Enum.t(), Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_inclusion(dataset, field, enum, opts \\ []),
-    to: Justify.Validators.Inclusion,
+    to: Dredd.Validators.Inclusion,
     as: :call
 
   @doc """
@@ -198,9 +198,9 @@ defmodule Justify do
       * “should have at least %{count} item(s)”
       * “should have at most %{count} item(s)”
   """
-  @spec validate_length(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_length(map, atom, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_length(dataset, field, opts),
-    to: Justify.Validators.Length,
+    to: Dredd.Validators.Length,
     as: :call
 
   @doc """
@@ -212,9 +212,9 @@ defmodule Justify do
   * `:message` - error message, defaults to "must be accepted"
   * `:trim?` - remove whitespace before validating, defaults to `true`
   """
-  @spec validate_required(map, atom | [atom], Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_required(map, atom | [atom], Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_required(dataset, fields, opts \\ []),
-    to: Justify.Validators.Required,
+    to: Dredd.Validators.Required,
     as: :call
 
   @doc """
@@ -233,9 +233,9 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "has invalid type"
   """
-  @spec validate_type(map, atom, type_t, Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_type(map, atom, type_t, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_type(dataset, field, type, opts \\ []),
-    to: Justify.Validators.Type,
+    to: Dredd.Validators.Type,
     as: :call
 
   @doc """
@@ -244,9 +244,9 @@ defmodule Justify do
   An optional keyword list can be used to provide additional contextual
   information about the error.
   """
-  @spec add_error(Justify.Dataset.t(), atom, String.t(), Keyword.t()) :: Justify.Dataset.t()
+  @spec add_error(Dredd.Dataset.t(), atom, String.t(), Keyword.t()) :: Dredd.Dataset.t()
   def add_error(dataset, field, message, keys \\ []) do
-    put_error(dataset, field, { message, keys })
+    put_error(dataset, field, {message, keys})
   end
 
   @doc false
@@ -254,8 +254,8 @@ defmodule Justify do
     errors =
       dataset
       |> Map.get(:errors)
-      |> Enum.concat([{ field, error }])
+      |> Enum.concat([{field, error}])
 
-    %{ dataset | errors: errors, valid?: false }
+    %{dataset | errors: errors, valid?: false}
   end
 end

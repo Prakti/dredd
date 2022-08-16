@@ -1,4 +1,4 @@
-defmodule Justify.Validators.EmbedTest do
+defmodule Dredd.Validators.EmbedTest do
   use ExUnit.Case, async: true
 
   describe "validate_embed/3" do
@@ -10,13 +10,13 @@ defmodule Justify.Validators.EmbedTest do
 
       data = Map.new([{field, Map.new([{embed_field, false}])}])
 
-      fun = fn _value -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn _value -> Dredd.add_error(%Dredd.Dataset{}, embed_field, message, keys) end
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [{^field, [{^embed_field, {^message, ^keys}}]}],
                valid?: false
-             } = Justify.validate_embed(data, field, fun)
+             } = Dredd.validate_embed(data, field, fun)
     end
 
     test "adds an error if an embedded list is invalid" do
@@ -29,16 +29,16 @@ defmodule Justify.Validators.EmbedTest do
       embed_data = Map.new([{embed_field, false}])
       data = Map.new([{field, [embed_data, embed_data]}])
 
-      fun = fn _value -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn _value -> Dredd.add_error(%Dredd.Dataset{}, embed_field, message, keys) end
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [
                  {^field,
                   [[{^embed_field, {^message, ^keys}}], [{^embed_field, {^message, ^keys}}]]}
                ],
                valid?: false
-             } = Justify.validate_embed(data, field, fun)
+             } = Dredd.validate_embed(data, field, fun)
     end
 
     test "does not add an error if the embedded value is valid" do
@@ -50,11 +50,11 @@ defmodule Justify.Validators.EmbedTest do
 
       fun = fn value -> value end
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_embed(data, field, fun)
+             } = Dredd.validate_embed(data, field, fun)
     end
 
     test "does not add an error if value is `nil`" do
@@ -66,13 +66,13 @@ defmodule Justify.Validators.EmbedTest do
 
       data = Map.new([{field, nil}])
 
-      fun = fn _value -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn _value -> Dredd.add_error(%Dredd.Dataset{}, embed_field, message, keys) end
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_embed(data, field, fun)
+             } = Dredd.validate_embed(data, field, fun)
     end
   end
 end

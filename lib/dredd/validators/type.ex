@@ -1,4 +1,4 @@
-defmodule Justify.Validators.Type do
+defmodule Dredd.Validators.Type do
   @moduledoc false
 
   @available_types [
@@ -13,11 +13,11 @@ defmodule Justify.Validators.Type do
   @default_message "has invalid type"
 
   def call(dataset, field, type, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dredd.Dataset.new(dataset)
 
     value = Map.get(dataset.data, field)
 
-    if (value == nil || value == "") do
+    if value == nil || value == "" do
       dataset
     else
       validate(dataset, field, type, value, opts)
@@ -30,7 +30,7 @@ defmodule Justify.Validators.Type do
     else
       message = Keyword.get(opts, :message, @default_message)
 
-      Justify.add_error(dataset, field, message, validation: :type, type: type)
+      Dredd.add_error(dataset, field, message, validation: :type, type: type)
     end
   end
 
@@ -65,6 +65,6 @@ defmodule Justify.Validators.Type do
       |> Enum.join(", ")
 
     raise ArgumentError,
-      "unknown type #{inspect(type)} given to Justify.validate_type/4.\n\n Available types: #{available_types}"
+          "unknown type #{inspect(type)} given to Dredd.validate_type/4.\n\n Available types: #{available_types}"
   end
 end

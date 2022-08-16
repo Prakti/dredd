@@ -1,4 +1,4 @@
-defmodule Justify.Validators.AcceptanceTest do
+defmodule Dredd.Validators.AcceptanceTest do
   use ExUnit.Case, async: true
 
   describe "validate_acceptance/3" do
@@ -6,33 +6,33 @@ defmodule Justify.Validators.AcceptanceTest do
       field = :field
       data = Map.new([{field, false}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [{^field, {"must be accepted", validation: :acceptance}}],
                valid?: false
-             } = Justify.validate_acceptance(data, field)
+             } = Dredd.validate_acceptance(data, field)
     end
 
     test "does not add an error if value is `true`" do
       field = :field
       data = Map.new([{field, true}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_acceptance(data, field)
+             } = Dredd.validate_acceptance(data, field)
     end
 
     test "does not add an error if value is `nil`" do
       field = :field
       data = Map.new([{field, nil}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_acceptance(data, field)
+             } = Dredd.validate_acceptance(data, field)
     end
 
     test "uses a custom error message when provided" do
@@ -40,11 +40,11 @@ defmodule Justify.Validators.AcceptanceTest do
       message = "message"
       data = Map.new([{field, false}])
 
-      assert %Justify.Dataset{
+      assert %Dredd.Dataset{
                data: ^data,
                errors: [{^field, {^message, validation: :acceptance}}],
                valid?: false
-             } = Justify.validate_acceptance(data, field, message: message)
+             } = Dredd.validate_acceptance(data, field, message: message)
     end
   end
 end

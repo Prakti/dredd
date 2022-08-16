@@ -1,26 +1,27 @@
-defmodule Justify.Validators.Required do
+defmodule Dredd.Validators.Required do
   @moduledoc false
 
   @default_message "can't be blank"
 
   def call(dataset, fields, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dredd.Dataset.new(dataset)
 
     fields = List.wrap(fields)
 
     message = Keyword.get(opts, :message, @default_message)
 
     Enum.reduce(fields, dataset, fn
-      (field, acc) ->
+      field, acc ->
         dataset.data
         |> Map.get(field)
         |> maybe_trim_value(Keyword.get(opts, :trim?, true))
         |> case do
-             value when value in [nil, ""] ->
-               Justify.add_error(acc, field, message, validation: :required)
-              _otherwise ->
-                acc
-           end
+          value when value in [nil, ""] ->
+            Dredd.add_error(acc, field, message, validation: :required)
+
+          _otherwise ->
+            acc
+        end
     end)
   end
 

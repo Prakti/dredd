@@ -1,10 +1,10 @@
-defmodule Justify.Validators.Format do
+defmodule Dredd.Validators.Format do
   @moduledoc false
 
   @default_message "has invalid format"
 
   def call(dataset, field, format, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dredd.Dataset.new(dataset)
 
     value = Map.get(dataset.data, field)
 
@@ -13,7 +13,7 @@ defmodule Justify.Validators.Format do
     if value == nil || value == "" || value =~ format do
       dataset
     else
-      Justify.add_error(dataset, field, message, validation: :format)
+      Dredd.add_error(dataset, field, message, validation: :format)
     end
   end
 end

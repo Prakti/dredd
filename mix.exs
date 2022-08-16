@@ -1,11 +1,11 @@
-defmodule Justify.MixProject do
+defmodule Dredd.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :justify,
-      description: "Validate unstructured data with Elixir",
-      version: "1.2.0",
+      app: :dredd,
+      description: "Dredd judges your structs. Validate data with Elixir",
+      version: "1.0.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -23,17 +23,15 @@ defmodule Justify.MixProject do
     [
       {:dialyxir, "~> 1.1.0", only: :dev, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:stream_data, "~> 0.4.3", onle: [:dev, :test]}
+      {:stream_data, "~> 0.4.3", only: [:dev, :test]}
     ]
   end
 
   defp package do
     %{
-      maintainers: ["Anthony Smith"],
+      maintainers: ["Marcus Autenrieth"],
       licenses: ["MIT"],
-      links: %{
-        GitHub: "https://github.com/malomohq/justify"
-      }
+      links: %{}
     }
   end
 end

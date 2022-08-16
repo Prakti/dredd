@@ -1,16 +1,17 @@
-defmodule Justify.Validators.Embed do
+defmodule Dredd.Validators.Embed do
   @moduledoc false
 
   def call(dataset, field, validator) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dredd.Dataset.new(dataset)
 
     value = Map.get(dataset.data, field)
 
     case validate(value, validator) do
       [] ->
         dataset
+
       errors ->
-        Justify.put_error(dataset, field, errors)
+        Dredd.put_error(dataset, field, errors)
     end
   end
 
@@ -26,6 +27,7 @@ defmodule Justify.Validators.Embed do
     case validate(h, validator) do
       [] ->
         []
+
       error ->
         [error]
     end ++ validate(t, validator)
