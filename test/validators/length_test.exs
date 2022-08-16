@@ -388,7 +388,7 @@ defmodule Dredd.Validators.LengthTest do
       end
     end
 
-    propery "adds an error if value is a list with more items than `:max`" do
+    property "adds an error if value is a list with more items than `:max`" do
       check all(
               value <- list_of(term(), min_length: 5),
               field <- atom(:alphanumeric)
