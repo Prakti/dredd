@@ -3,6 +3,37 @@ name: ci
 on: push
 
 jobs:
+
+  credo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+
+        with:
+          key: ${{ github.job }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}-1
+
+          path: _build
+
+      - uses: erlef/setup-elixir@v1
+
+        with:
+          elixir-version: ${{ matrix.elixir }}
+
+          otp-version: ${{ matrix.otp }}
+
+      - run: mix deps.get
+
+      - run: mix credo --strict
+
+    strategy:
+      matrix:
+        elixir: [1.11.x, 1.12.x, 1.13.x]
+
+        otp: [22.x, 23.x, 24.x]
+
   dialyzer:
     runs-on: ubuntu-latest
 

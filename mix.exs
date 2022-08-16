@@ -23,7 +23,8 @@ defmodule Dredd.MixProject do
     [
       {:dialyxir, "~> 1.1.0", only: :dev, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:stream_data, "~> 0.4.3", only: [:dev, :test]}
+      {:stream_data, "~> 0.4.3", only: [:dev, :test]},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
 
