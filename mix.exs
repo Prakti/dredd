@@ -6,7 +6,7 @@ defmodule Dredd.MixProject do
       app: :dredd,
       description: "Dredd judges your structs. Validate data with Elixir",
       version: "1.0.0",
-      elixir: "~> 1.9",
+      elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package()
