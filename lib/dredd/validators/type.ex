@@ -59,10 +59,7 @@ defmodule Dredd.Validators.Type do
   end
 
   defp check(type, _value) do
-    available_types =
-      @available_types
-      |> Enum.map(&inspect/1)
-      |> Enum.join(", ")
+    available_types = Enum.map_join(@available_types, ", ", &inspect/1)
 
     raise ArgumentError,
           "unknown type #{inspect(type)} given to Dredd.validate_type/4.\n\n Available types: #{available_types}"
