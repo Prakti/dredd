@@ -256,6 +256,18 @@ defmodule Dredd do
     as: :call
 
   @doc """
+  Validates if the value of a given field is a UUID.binary_to_string!
+
+  ## Options
+
+  * `:message` - error message, defaults to "is not a valid UUID"
+  """
+  @spec validate_uuid(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_uuid(dataset, field, opts \\ []),
+    to: Dredd.Validators.UUID,
+    as: :call
+
+  @doc """
   Adds an error to the dataset.
 
   An optional keyword list can be used to provide additional contextual
