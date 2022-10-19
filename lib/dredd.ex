@@ -240,6 +240,20 @@ defmodule Dredd do
   defdelegate validate_type(dataset, field, type, opts \\ []),
     to: Dredd.Validators.Type,
     as: :call
+	
+  @doc """
+  Validates if the value of a given field is an email.
+
+  NOTE: this validator is not RFC822 compliant. If you really need to be sure,
+  send an email to that address.
+
+  ## Options
+  * `:message` - error message, default to "is not a valid email address"
+  """
+  @spec validate_email(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_email(dataset, field, opts \\ []),
+    to: Dredd.Validators.Email,
+    as: :call
 
   @doc """
   Adds an error to the dataset.
