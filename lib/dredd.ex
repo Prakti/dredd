@@ -250,7 +250,7 @@ defmodule Dredd do
   ## Options
   * `:message` - error message, default to "is not a valid email address"
   """
-  @spec validate_email(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_email(map, atom, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_email(dataset, field, opts \\ []),
     to: Dredd.Validators.Email,
     as: :call
@@ -262,9 +262,21 @@ defmodule Dredd do
 
   * `:message` - error message, defaults to "is not a valid UUID"
   """
-  @spec validate_uuid(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_uuid(map, atom, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_uuid(dataset, field, opts \\ []),
     to: Dredd.Validators.UUID,
+    as: :call
+
+  @doc """
+  Validates if the value of a given field is a UUID.binary_to_string!
+
+  ## Options
+
+  * `:message` - error message, defaults to "is not a valid UUID"
+  """
+  @spec validate_nanoid(map, atom, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_nanoid(dataset, field, opts \\ []),
+    to: Dredd.Validators.NanoID,
     as: :call
 
   @doc """
