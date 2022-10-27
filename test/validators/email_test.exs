@@ -8,6 +8,22 @@ defmodule Dredd.Validators.EmailTest do
 
   @username_chars [?a..?z] ++ [?A..?Z] ++ [?0..?9]
 
+  defp build_email_name(fragments, separators) do
+    bind(fragments, fn [first | frags] ->
+      if frags != [] do
+        rest =
+          Stream.zip(separators, frags)
+          |> Stream.map(&Tuple.to_list/1)
+          |> Enum.concat()
+          |> Enum.join()
+
+        constant(first <> rest)
+      else
+        constant(first)
+      end
+    end)
+  end
+
   def email do
     separator = member_of(["-", "_", "."])
     separators = list_of(separator, max_length: 4)
@@ -18,19 +34,7 @@ defmodule Dredd.Validators.EmailTest do
         fragment_count = Enum.count(seps) + 1
         fragment_list = list_of(fragments, length: fragment_count)
 
-        bind(fragment_list, fn [first | frags] ->
-          if frags != [] do
-            rest =
-              Stream.zip(seps, frags)
-              |> Stream.map(&Tuple.to_list/1)
-              |> Enum.concat()
-              |> Enum.join()
-
-            constant(first <> rest)
-          else
-            constant(first)
-          end
-        end)
+        build_email_name(fragment_list, seps)
       end)
 
     domain = string([?a..?z], min_length: 2, max_length: 10)

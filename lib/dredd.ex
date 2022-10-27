@@ -240,7 +240,7 @@ defmodule Dredd do
   defdelegate validate_type(dataset, field, type, opts \\ []),
     to: Dredd.Validators.Type,
     as: :call
-	
+
   @doc """
   Validates if the value of a given field is an email.
 

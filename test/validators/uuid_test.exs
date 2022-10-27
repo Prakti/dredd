@@ -16,8 +16,7 @@ defmodule Dredd.Validators.UUIDTest do
     bytes_to_string = fn bytes ->
       bytes
       |> Tuple.to_list()
-      |> Enum.map(&Base.encode16/1)
-      |> Enum.join("-")
+      |> Enum.map_join("-", &Base.encode16/1)
       |> String.downcase()
     end
 
