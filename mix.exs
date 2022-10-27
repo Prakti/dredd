@@ -32,7 +32,7 @@ defmodule Dredd.MixProject do
     %{
       maintainers: ["Marcus Autenrieth"],
       licenses: ["MIT"],
-      links: %{}
+      links: %{ "GitHub" => "https://github.com/Prakti/dredd" }
     }
   end
 end
