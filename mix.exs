@@ -9,7 +9,8 @@ defmodule Dredd.MixProject do
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      package: package()
+      package: package(),
+      docs: docs()
     ]
   end
 
@@ -34,5 +35,11 @@ defmodule Dredd.MixProject do
       licenses: ["MIT"],
       links: %{ "GitHub" => "https://github.com/Prakti/dredd" }
     }
+  end
+
+  defp docs do
+    [
+      main: "Dredd",
+    ]
   end
 end
