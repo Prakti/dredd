@@ -10,18 +10,17 @@ defmodule Dredd.Validators.Required do
 
     message = Keyword.get(opts, :message, @default_message)
 
-    Enum.reduce(fields, dataset, fn
-      field, acc ->
+    Enum.reduce(fields, dataset, fn field, acc ->
+      trimmed_value =
         dataset.data
         |> Map.get(field)
         |> maybe_trim_value(Keyword.get(opts, :trim?, true))
-        |> case do
-          value when value in [nil, ""] ->
-            Dredd.add_error(acc, field, message, validation: :required)
 
-          _otherwise ->
-            acc
-        end
+      if trimmed_value in [nil, ""] do
+        Dredd.add_error(acc, field, message, validation: :required)
+      else
+        acc
+      end
     end)
   end
 

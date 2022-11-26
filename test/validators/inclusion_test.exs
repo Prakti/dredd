@@ -9,7 +9,7 @@ defmodule Dredd.Validators.InclusionTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"is invalid", validation: :inclusion, enum: ^enum}}],
+               errors: [{^field, [{"is invalid", validation: :inclusion, enum: ^enum}]}],
                valid?: false
              } = Dredd.validate_inclusion(data, field, enum)
     end
@@ -34,7 +34,7 @@ defmodule Dredd.Validators.InclusionTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {^message, validation: :inclusion, enum: ^enum}}],
+               errors: [{^field, [{^message, validation: :inclusion, enum: ^enum}]}],
                valid?: false
              } = Dredd.validate_inclusion(data, field, enum, message: message)
     end

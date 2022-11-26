@@ -49,7 +49,7 @@ defmodule Dredd.Validators.NanoIDTest do
         assert %Dataset{
                  data: ^data,
                  valid?: false,
-                 errors: [nanoid: {"is not a valid NanoID", [validation: :nanoid]}]
+                 errors: [nanoid: [{"is not a valid NanoID", [validation: :nanoid]}]]
                } = Dredd.validate_nanoid(data, :nanoid)
       end
     end

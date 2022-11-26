@@ -19,7 +19,7 @@ dataset =
   |> Dredd.validate_required(:email)
   |> Dredd.validate_format(:email, ~r/\S+@\S+/)
 
-dataset.errors #=> [email: {"has invalid format", validation: :format}]
+dataset.errors #=> [email: [{"has invalid format", validation: :format}]]
 dataset.valid? #=> false
 ```
 
@@ -60,7 +60,7 @@ dataset =
   |> Dredd.validation_required(:color)
   |> MyValidator.validate_color(:color, "green")
 
-dataset.errors #=> [color: {"wrong color", validation: :color}]
+dataset.errors #=> [color: [{"wrong color", validation: :color}]]
 dataset.valid? #=> false
 ```
 

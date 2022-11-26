@@ -9,7 +9,7 @@ defmodule Dredd.Validators.ConfirmationTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"does not match", validation: :confirmation}}],
+               errors: [{^field, [{"does not match", validation: :confirmation}]}],
                valid?: false
              } = Dredd.validate_confirmation(data, field)
     end
@@ -21,7 +21,7 @@ defmodule Dredd.Validators.ConfirmationTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^confirmation_field, {"can't be blank", validation: :required}}],
+               errors: [{^confirmation_field, [{"can't be blank", validation: :required}]}],
                valid?: false
              } = Dredd.validate_confirmation(data, field, required?: true)
     end
@@ -46,7 +46,7 @@ defmodule Dredd.Validators.ConfirmationTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"does not match", validation: :confirmation}}],
+               errors: [{^field, [{"does not match", validation: :confirmation}]}],
                valid?: false
              } = Dredd.validate_confirmation(data, field, confirmation_field: confirmation_field)
     end
@@ -59,7 +59,7 @@ defmodule Dredd.Validators.ConfirmationTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {^message, validation: :confirmation}}],
+               errors: [{^field, [{^message, validation: :confirmation}]}],
                valid?: false
              } = Dredd.validate_confirmation(data, field, message: message)
     end

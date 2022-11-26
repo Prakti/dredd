@@ -81,7 +81,7 @@ defmodule Dredd.Validators.EmailTest do
         assert %Dredd.Dataset{
                  data: ^data,
                  valid?: false,
-                 errors: [email: {"is not a valid email address", [validation: :email]}]
+                 errors: [email: [{"is not a valid email address", [validation: :email]}]]
                } = Dredd.validate_email(data, :email)
       end
     end
@@ -117,7 +117,7 @@ defmodule Dredd.Validators.EmailTest do
         assert %Dredd.Dataset{
                  data: ^data,
                  valid?: false,
-                 errors: [email: {"is not a valid email address", [validation: :email]}]
+                 errors: [email: [{"is not a valid email address", [validation: :email]}]]
                } = Dredd.validate_email(dataset, :email)
       end
     end

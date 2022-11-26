@@ -8,7 +8,7 @@ defmodule Dredd.Validators.AcceptanceTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"must be accepted", validation: :acceptance}}],
+               errors: [{^field, [{"must be accepted", validation: :acceptance}]}],
                valid?: false
              } = Dredd.validate_acceptance(data, field)
     end
@@ -42,7 +42,7 @@ defmodule Dredd.Validators.AcceptanceTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {^message, validation: :acceptance}}],
+               errors: [{^field, [{^message, validation: :acceptance}]}],
                valid?: false
              } = Dredd.validate_acceptance(data, field, message: message)
     end

@@ -8,7 +8,7 @@ defmodule Dredd.Validators.FormatTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid format", validation: :format}}],
+               errors: [{^field, [{"has invalid format", validation: :format}]}],
                valid?: false
              } = Dredd.validate_format(data, field, ~r/\d/)
     end
@@ -32,7 +32,7 @@ defmodule Dredd.Validators.FormatTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {^message, validation: :format}}],
+               errors: [{^field, [{^message, validation: :format}]}],
                valid?: false
              } = Dredd.validate_format(data, field, ~r/\d/, message: message)
     end

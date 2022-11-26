@@ -11,7 +11,7 @@ defmodule Dredd.Validators.ExclusionTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"is reserved", validation: :exclusion, enum: ^enum}}],
+               errors: [{^field, [{"is reserved", validation: :exclusion, enum: ^enum}]}],
                valid?: false
              } = Dredd.validate_exclusion(data, field, enum)
     end
@@ -37,7 +37,7 @@ defmodule Dredd.Validators.ExclusionTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {^message, validation: :exclusion, enum: ^enum}}],
+               errors: [{^field, [{^message, validation: :exclusion, enum: ^enum}]}],
                valid?: false
              } = Dredd.validate_exclusion(data, field, enum, message: message)
     end

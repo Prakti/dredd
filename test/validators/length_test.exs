@@ -106,8 +106,10 @@ defmodule Dredd.Validators.LengthTest do
 
         expected_errors = [
           {field,
-           {"should be %{count} character(s)",
-            count: wrong_length, kind: :is, type: :string, validation: :length}}
+           [
+             {"should be %{count} character(s)",
+              count: wrong_length, kind: :is, type: :string, validation: :length}
+           ]}
         ]
 
         assert %Dredd.Dataset{
@@ -135,8 +137,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should be at least %{count} character(s)",
-                   count: count, kind: :min, type: :string, validation: :length}}
+                  [
+                    {"should be at least %{count} character(s)",
+                     count: count, kind: :min, type: :string, validation: :length}
+                  ]}
                ]
       end
     end
@@ -164,8 +168,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should be at most %{count} character(s)",
-                   count: count, kind: :max, type: :string, validation: :length}}
+                  [
+                    {"should be at most %{count} character(s)",
+                     count: count, kind: :max, type: :string, validation: :length}
+                  ]}
                ]
       end
     end
@@ -193,8 +199,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should be %{count} character(s)",
-                   count: wrong_length, kind: :is, type: :string, validation: :length}}
+                  [
+                    {"should be %{count} character(s)",
+                     count: wrong_length, kind: :is, type: :string, validation: :length}
+                  ]}
                ]
       end
     end
@@ -216,8 +224,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should be at least %{count} character(s)",
-                   count: count, kind: :min, type: :string, validation: :length}}
+                  [
+                    {"should be at least %{count} character(s)",
+                     count: count, kind: :min, type: :string, validation: :length}
+                  ]}
                ]
       end
     end
@@ -245,8 +255,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should be at most %{count} character(s)",
-                   count: count, kind: :max, type: :string, validation: :length}}
+                  [
+                    {"should be at most %{count} character(s)",
+                     count: count, kind: :max, type: :string, validation: :length}
+                  ]}
                ]
       end
     end
@@ -275,8 +287,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should be %{count} byte(s)",
-                   count: count, kind: :is, type: :binary, validation: :length}}
+                  [
+                    {"should be %{count} byte(s)",
+                     count: count, kind: :is, type: :binary, validation: :length}
+                  ]}
                ]
       end
     end
@@ -298,8 +312,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should be at least %{count} byte(s)",
-                   count: count, kind: :min, type: :binary, validation: :length}}
+                  [
+                    {"should be at least %{count} byte(s)",
+                     count: count, kind: :min, type: :binary, validation: :length}
+                  ]}
                ]
       end
     end
@@ -327,8 +343,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should be at most %{count} byte(s)",
-                   count: count, kind: :max, type: :binary, validation: :length}}
+                  [
+                    {"should be at most %{count} byte(s)",
+                     count: count, kind: :max, type: :binary, validation: :length}
+                  ]}
                ]
       end
     end
@@ -359,8 +377,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should have %{count} item(s)",
-                   count: count, kind: :is, type: :list, validation: :length}}
+                  [
+                    {"should have %{count} item(s)",
+                     count: count, kind: :is, type: :list, validation: :length}
+                  ]}
                ]
       end
     end
@@ -382,8 +402,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should have at least %{count} item(s)",
-                   count: count, kind: :min, type: :list, validation: :length}}
+                  [
+                    {"should have at least %{count} item(s)",
+                     count: count, kind: :min, type: :list, validation: :length}
+                  ]}
                ]
       end
     end
@@ -411,8 +433,10 @@ defmodule Dredd.Validators.LengthTest do
 
         assert result.errors == [
                  {field,
-                  {"should have at most %{count} item(s)",
-                   count: count, kind: :max, type: :list, validation: :length}}
+                  [
+                    {"should have at most %{count} item(s)",
+                     count: count, kind: :max, type: :list, validation: :length}
+                  ]}
                ]
       end
     end
@@ -533,7 +557,7 @@ defmodule Dredd.Validators.LengthTest do
                data: ^data,
                errors: [
                  {^field,
-                  {^message, count: ^count, kind: :is, type: :string, validation: :length}}
+                  [{^message, count: ^count, kind: :is, type: :string, validation: :length}]}
                ],
                valid?: false
              } = Dredd.validate_length(data, field, is: count, message: message)

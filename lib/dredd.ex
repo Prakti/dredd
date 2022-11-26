@@ -19,7 +19,7 @@ defmodule Dredd do
     |> Dredd.validate_required(:email)
     |> Dredd.validate_format(:email, ~r/\S+@\S+/)
 
-  dataset.errors #=> [email: {"has invalid format", validation: :format}]
+  dataset.errors #=> [email: [{"has invalid format", validation: :format}]]
   dataset.valid? #=> false
   ```
 
@@ -60,7 +60,7 @@ defmodule Dredd do
     |> Dredd.validation_required(:color)
     |> MyValidator.validate_color(:color, "green")
 
-  dataset.errors #=> [color: {"wrong color", validation: :color}]
+  dataset.errors #=> [color: [{"wrong color", validation: :color}]]
   dataset.valid? #=> false
   ```
 
@@ -120,22 +120,30 @@ defmodule Dredd do
     as: :call
 
   @doc """
-  Applies a validator function to a field containing an embedded value.
-
-  An embedded value can be either a map or a list of maps.
+  Applies a validator function to a field containing an struct itself.
 
   ## Example
 
       validator = fn(metadata) -> Dredd.validate_required(metadata, :key) end
 
-      data = %{metadata: [%{value: "a value"}]}
+      data = %{metadata: {value: "a value"}}
 
       validate_embed(data, :metadata, validator)
-      #> %Dredd.Dataset{errors: [metadata: [[key: {"can't be blank", validation: :required}]]], valid?: false}
+      #> %Dredd.Dataset{errors: [metadata: [{key: [{"can't be blank", validation: :required}] }] ], valid?: false}
   """
-  @spec validate_embed(map, atom, fun) :: Dredd.Dataset.t()
-  defdelegate validate_embed(dataset, field, validator),
-    to: Dredd.Validators.Embed,
+  @spec validate_object(map, atom, fun) :: Dredd.Dataset.t()
+  defdelegate validate_object(dataset, field, validator),
+    to: Dredd.Validators.Object,
+    as: :call
+
+  @doc """
+    Applies a validator function to a each element of a list contained in a field.
+
+  ## TODO: 2022-11-20 - Write Example
+  """
+  @spec validate_list(map, atom, fun) :: Dredd.Dataset.t()
+  defdelegate validate_list(dataset, field, validator),
+    to: Dredd.Validators.List,
     as: :call
 
   @doc """
@@ -291,11 +299,21 @@ defmodule Dredd do
   end
 
   @doc false
+  def put_error(dataset, field, error) when is_list(error) do
+    errors =
+      dataset
+      |> Map.get(:errors)
+      |> Keyword.update(field, error, &Enum.concat(&1, error))
+
+    %{dataset | errors: errors, valid?: false}
+  end
+
+  @doc false
   def put_error(dataset, field, error) do
     errors =
       dataset
       |> Map.get(:errors)
-      |> Enum.concat([{field, error}])
+      |> Keyword.update(field, [error], &Enum.concat(&1, [error]))
 
     %{dataset | errors: errors, valid?: false}
   end

@@ -11,8 +11,8 @@ defmodule DreddTest do
 
       dataset = Dredd.add_error(%Dredd.Dataset{}, field, message, keys)
 
-      assert %Dredd.Dataset{errors: [{^field, {^message, ^keys}}], valid?: false} = dataset
-      assert %Dredd.Dataset{errors: [{^field, {^message, ^keys}}], valid?: false} = dataset
+      assert %Dredd.Dataset{errors: [{^field, [{^message, ^keys}]}], valid?: false} = dataset
+      assert %Dredd.Dataset{errors: [{^field, [{^message, ^keys}]}], valid?: false} = dataset
     end
   end
 
@@ -24,7 +24,7 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :boolean}}],
+               errors: [{^field, [{"has invalid type", validation: :type, type: :boolean}]}],
                valid?: false
              } = Dredd.validate_type(data, field, :boolean)
     end
@@ -36,7 +36,7 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :float}}],
+               errors: [{^field, [{"has invalid type", validation: :type, type: :float}]}],
                valid?: false
              } = Dredd.validate_type(data, field, :float)
     end
@@ -48,7 +48,7 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :integer}}],
+               errors: [{^field, [{"has invalid type", validation: :type, type: :integer}]}],
                valid?: false
              } = Dredd.validate_type(data, field, :integer)
     end
@@ -60,7 +60,9 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :non_neg_integer}}],
+               errors: [
+                 {^field, [{"has invalid type", validation: :type, type: :non_neg_integer}]}
+               ],
                valid?: false
              } = Dredd.validate_type(data, field, :non_neg_integer)
     end
@@ -72,7 +74,9 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :non_neg_integer}}],
+               errors: [
+                 {^field, [{"has invalid type", validation: :type, type: :non_neg_integer}]}
+               ],
                valid?: false
              } = Dredd.validate_type(data, field, :non_neg_integer)
     end
@@ -84,7 +88,7 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :pos_integer}}],
+               errors: [{^field, [{"has invalid type", validation: :type, type: :pos_integer}]}],
                valid?: false
              } = Dredd.validate_type(data, field, :pos_integer)
     end
@@ -96,7 +100,7 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :pos_integer}}],
+               errors: [{^field, [{"has invalid type", validation: :type, type: :pos_integer}]}],
                valid?: false
              } = Dredd.validate_type(data, field, :pos_integer)
     end
@@ -108,7 +112,7 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :pos_integer}}],
+               errors: [{^field, [{"has invalid type", validation: :type, type: :pos_integer}]}],
                valid?: false
              } = Dredd.validate_type(data, field, :pos_integer)
     end
@@ -120,7 +124,7 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"has invalid type", validation: :type, type: :string}}],
+               errors: [{^field, [{"has invalid type", validation: :type, type: :string}]}],
                valid?: false
              } = Dredd.validate_type(data, field, :string)
     end
@@ -213,7 +217,7 @@ defmodule DreddTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {^message, validation: :type, type: :boolean}}],
+               errors: [{^field, [{^message, validation: :type, type: :boolean}]}],
                valid?: false
              } = Dredd.validate_type(data, field, :boolean, message: message)
     end

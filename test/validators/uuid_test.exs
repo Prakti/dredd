@@ -79,7 +79,7 @@ defmodule Dredd.Validators.UUIDTest do
         assert %Dredd.Dataset{
                  data: ^data,
                  valid?: false,
-                 errors: [uuid: {"is not a valid uuid", [validation: :uuid]}]
+                 errors: [uuid: [{"is not a valid uuid", [validation: :uuid]}]]
                } = Dredd.validate_uuid(data, :uuid)
       end
     end
@@ -96,7 +96,7 @@ defmodule Dredd.Validators.UUIDTest do
         assert %Dredd.Dataset{
                  data: ^data,
                  valid?: false,
-                 errors: [uuid: {"is not a valid uuid", [validation: :uuid]}]
+                 errors: [uuid: [{"is not a valid uuid", [validation: :uuid]}]]
                } = Dredd.validate_uuid(dataset, :uuid)
       end
     end

@@ -10,7 +10,7 @@ defmodule Dredd.Validators.RequiredTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"can't be blank", validation: :required}}],
+               errors: [{^field, [{"can't be blank", validation: :required}]}],
                valid?: false
              } = Dredd.validate_required(data, field)
     end
@@ -22,7 +22,7 @@ defmodule Dredd.Validators.RequiredTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {"can't be blank", validation: :required}}],
+               errors: [{^field, [{"can't be blank", validation: :required}]}],
                valid?: false
              } = Dredd.validate_required(data, field)
     end
@@ -37,7 +37,7 @@ defmodule Dredd.Validators.RequiredTest do
         assert %Dredd.Dataset{} = result
         assert result.valid? == false
         assert result.data == data
-        assert result.errors == [{field, {"can't be blank", validation: :required}}]
+        assert result.errors == [{field, [{"can't be blank", validation: :required}]}]
       end
     end
 
@@ -52,7 +52,8 @@ defmodule Dredd.Validators.RequiredTest do
         assert result.data == data
 
         Enum.each(fields, fn field ->
-          assert Keyword.get(result.errors, field) == {"can't be blank", validation: :required}
+          assert [{"can't be blank", validation: :required} | _] =
+                   Keyword.get(result.errors, field)
         end)
       end
     end
@@ -66,7 +67,7 @@ defmodule Dredd.Validators.RequiredTest do
       assert %Dredd.Dataset{
                data: ^data,
                errors: [
-                 {^field_a, {"can't be blank", validation: :required}}
+                 {^field_a, [{"can't be blank", validation: :required}]}
                ],
                valid?: false
              } = Dredd.validate_required(data, [field_a, field_b])
@@ -125,7 +126,7 @@ defmodule Dredd.Validators.RequiredTest do
 
       assert %Dredd.Dataset{
                data: ^data,
-               errors: [{^field, {^message, validation: :required}}],
+               errors: [{^field, [{^message, validation: :required}]}],
                valid?: false
              } = Dredd.validate_required(data, field, message: message)
     end
