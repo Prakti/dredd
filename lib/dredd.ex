@@ -270,8 +270,8 @@ defmodule Dredd do
 
   * `:message` - error message, defaults to "is not a valid UUID"
   """
-  @spec validate_uuid(map, atom, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_uuid(dataset, field, opts \\ []),
+  @spec validate_uuid(any, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_uuid(data, opts \\ []),
     to: Dredd.Validators.UUID,
     as: :call
 
@@ -286,6 +286,16 @@ defmodule Dredd do
   defdelegate validate_nanoid(dataset, field, opts \\ []),
     to: Dredd.Validators.NanoID,
     as: :call
+
+  @doc """
+  Validates if the given value is enumerable (i.e.: list, tuple or map, ...)
+  Usually this should be used to validate lists of values.
+  """
+  @spec validate_enumerable(any(), Keyword.t()) :: Dredd.SingleResult.t()
+  defdelegate validate_enumerable(value, opts \\ []),
+    to: Dredd.Validators.Enumerable,
+    as: :call
+
 
   @doc """
   Adds an error to the dataset.
