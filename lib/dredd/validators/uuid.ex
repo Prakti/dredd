@@ -5,15 +5,15 @@ defmodule Dredd.Validators.UUID do
 
   @default_message "is not a valid uuid"
 
-  use Dredd.SingleValidator
+  def call(dataset, _opts) do
+    dataset = Dredd.Dataset.new(dataset)
 
-  def validate(result, _opts) do
-    data = result.data
+    data = dataset.data
 
-    if data == nil || is_uuid?(data) do
-      result
+    if data == nil || data == "" || is_uuid?(data) do
+      dataset
     else
-      error_result(data, @default_message, :uuid, %{})
+      Dredd.set_single_error(dataset, @default_message, :uuid)
     end
   end
 

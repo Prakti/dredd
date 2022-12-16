@@ -1,15 +1,20 @@
 defmodule Dredd.Dataset do
   @moduledoc """
-  This is the internal datastructure in which the validators accumulate any validation errors.
+  This is the internal datastructure used for passing the current validation
+  state from validator to validator including the top-level error-structure of any
+  validated datastructure.
   """
 
-  defstruct data: %{}, errors: [], valid?: true
+  defstruct data: nil, error: nil, valid?: true
 
-  @type error_t :: {String.t(), Keyword.t()}
+  @type error_t ::
+          Dredd.SingleError.t()
+          | Dredd.ListErrors.t()
+          | Dredd.StructErrors.t()
 
   @type t :: %__MODULE__{
-          data: map,
-          errors: [{atom, error_t}],
+          data: any,
+          error: nil | error_t,
           valid?: boolean
         }
 

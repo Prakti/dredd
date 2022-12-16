@@ -1,64 +1,69 @@
 defmodule Dredd.Validators.FormatTest do
   use ExUnit.Case, async: true
 
+  alias Dredd.{
+    Dataset,
+    SingleError
+  }
+
   describe "validate_format/4" do
     test "adds an error if value does not match the provided format" do
-      field = :field
-      data = Map.new([{field, "value"}])
+      data = "foo"
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [{^field, [{"has invalid format", validation: :format}]}],
+               error: %SingleError{
+                 validator: :format,
+                 message: "has invalid format",
+                 metadata: %{}
+               },
                valid?: false
-             } = Dredd.validate_format(data, field, ~r/\d/)
+             } = Dredd.validate_format(data, ~r/\d/)
     end
 
     test "does not add an error if value does match the provided format" do
-      field = :field
-      value = "value"
-      data = Map.new([{field, value}])
+      data = "value"
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [],
+               error: nil,
                valid?: true
-             } = Dredd.validate_format(data, field, ~r/#{value}/)
+             } = Dredd.validate_format(data, ~r/#{data}/)
     end
 
     test "uses a custom error message when provided" do
-      field = :field
       message = "message"
-      data = Map.new([{field, "value"}])
+      data = "value"
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [{^field, [{^message, validation: :format}]}],
+               error: %SingleError{
+                 validator: :format,
+                 message: ^message,
+                 metadata: %{}
+               },
                valid?: false
-             } = Dredd.validate_format(data, field, ~r/\d/, message: message)
+             } = Dredd.validate_format(data, ~r/\d/, message: message)
     end
 
     test "do not add an error if value is nil" do
-      field = :field
-      value = nil
-      data = Map.new([{field, value}])
+      data = nil
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [],
+               error: nil,
                valid?: true
-             } = Dredd.validate_format(data, field, ~r/\d/)
+             } = Dredd.validate_format(data, ~r/\d/)
     end
 
     test "do not add an error if value is a blank string" do
-      field = :field
-      value = ""
-      data = Map.new([{field, value}])
+      data = ""
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [],
+               error: nil,
                valid?: true
-             } = Dredd.validate_format(data, field, ~r/\d/)
+             } = Dredd.validate_format(data, ~r/\d/)
     end
   end
 end

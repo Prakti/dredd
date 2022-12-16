@@ -1,64 +1,71 @@
 defmodule Dredd.Validators.InclusionTest do
   use ExUnit.Case, async: true
 
+  alias Dredd.{
+    Dataset,
+    SingleError
+  }
+
   describe "validate_inclusion/4" do
     test "adds an error if value is not contained within enum" do
-      field = :field
-      data = Map.new([{field, "value"}])
+      data = "value"
       enum = ["another value"]
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [{^field, [{"is invalid", validation: :inclusion, enum: ^enum}]}],
+               error: %SingleError{
+                 validator: :inclusion,
+                 message: "is invalid",
+                 metadata: %{enum: ^enum}
+               },
                valid?: false
-             } = Dredd.validate_inclusion(data, field, enum)
+             } = Dredd.validate_inclusion(data, enum)
     end
 
     test "does not add an error if the value is not contained within enum" do
-      field = :field
       value = "value"
-      data = Map.new([{field, value}])
 
-      assert %Dredd.Dataset{
-               data: ^data,
-               errors: [],
+      assert %Dataset{
+               data: ^value,
+               error: nil,
                valid?: true
-             } = Dredd.validate_inclusion(data, field, [value])
+             } = Dredd.validate_inclusion(value, [value])
     end
 
     test "uses a custom error message when provided" do
-      field = :field
       message = "message"
-      data = Map.new([{field, "value"}])
+      data = "value"
       enum = ["another value"]
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [{^field, [{^message, validation: :inclusion, enum: ^enum}]}],
+               error: %SingleError{
+                 validator: :inclusion,
+                 message: ^message,
+                 metadata: %{enum: ^enum}
+               },
                valid?: false
-             } = Dredd.validate_inclusion(data, field, enum, message: message)
+             } = Dredd.validate_inclusion(data, enum, message: message)
     end
 
     test "does not add an error if value is nil" do
-      field = :field
-      data = Map.new([{field, nil}])
+      data = nil
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [],
+               error: nil,
                valid?: true
-             } = Dredd.validate_inclusion(data, field, ["a value"])
+             } = Dredd.validate_inclusion(data, ["a value"])
     end
 
     test "does not add an error if value is an empty string" do
-      field = :field
-      data = Map.new([{field, ""}])
+      data = ""
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [],
+               error: nil,
                valid?: true
-             } = Dredd.validate_inclusion(data, field, ["a value"])
+             } = Dredd.validate_inclusion(data, ["a value"])
     end
   end
 end

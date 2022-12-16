@@ -5,17 +5,17 @@ defmodule Dredd.Validators.Email do
 
   @default_message "is not a valid email address"
 
-  def call(dataset, field, opts \\ []) do
+  def call(dataset, opts \\ []) do
     dataset = Dredd.Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = dataset.data
 
     message = Keyword.get(opts, :message, @default_message)
 
     if value == nil || is_email?(value) do
       dataset
     else
-      Dredd.add_error(dataset, field, message, validation: :email)
+      Dredd.set_single_error(dataset, message, :email)
     end
   end
 

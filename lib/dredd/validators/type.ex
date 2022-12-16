@@ -12,25 +12,25 @@ defmodule Dredd.Validators.Type do
 
   @default_message "has invalid type"
 
-  def call(dataset, field, type, opts \\ []) do
+  def call(dataset, type, opts \\ []) do
     dataset = Dredd.Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = dataset.data
 
     if value == nil || value == "" do
       dataset
     else
-      validate(dataset, field, type, value, opts)
+      validate(dataset, type, value, opts)
     end
   end
 
-  defp validate(dataset, field, type, value, opts) do
+  defp validate(dataset, type, value, opts) do
     if check(type, value) do
       dataset
     else
       message = Keyword.get(opts, :message, @default_message)
 
-      Dredd.add_error(dataset, field, message, validation: :type, type: type)
+      Dredd.set_single_error(dataset, message, :type, %{type: type})
     end
   end
 

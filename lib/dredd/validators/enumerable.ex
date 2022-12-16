@@ -2,18 +2,16 @@ defmodule Dredd.Validators.Enumerable do
   @moduledoc false
 
   @default_message "is not enumerable"
-  
-  use Dredd.SingleValidator
 
-  # TODO: 2022-12-12 Write Test for Enumerable Validator
+  def call(dataset, _opts) do
+    dataset = Dredd.Dataset.new(dataset)
 
-  @impl true
-  def validate(result, _opts) do
-    if Enumerable.impl_for(result.data) != nil do
-      result
+    data = dataset.data
+
+    if Enumerable.impl_for(data) != nil do
+      dataset
     else
-      error_result(result.data, @default_message, :enumerable, %{}) 
+      Dredd.set_single_error(dataset, @default_message, :enumerable)
     end
   end
-
 end

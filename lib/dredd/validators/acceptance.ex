@@ -3,10 +3,10 @@ defmodule Dredd.Validators.Acceptance do
 
   @default_message "must be accepted"
 
-  def call(dataset, field, opts \\ []) do
+  def call(dataset, opts \\ []) do
     dataset = Dredd.Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = dataset.data
 
     message = Keyword.get(opts, :message, @default_message)
 
@@ -15,7 +15,7 @@ defmodule Dredd.Validators.Acceptance do
         dataset
 
       _otherwise ->
-        Dredd.add_error(dataset, field, message, validation: :acceptance)
+        Dredd.set_single_error(dataset, message, :acceptance)
     end
   end
 end

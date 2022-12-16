@@ -4,7 +4,7 @@ defmodule Dredd.Validators.UUIDTest do
 
   alias Dredd.{
     SingleError,
-    SingleResult
+    Dataset
   }
 
   def uuid_gen do
@@ -34,7 +34,7 @@ defmodule Dredd.Validators.UUIDTest do
   describe "validate_uuid" do
     property "correctly validates single uuid4 value" do
       check all(uuid <- uuid_gen()) do
-        assert %SingleResult{
+        assert %Dataset{
                  data: ^uuid,
                  valid?: true,
                  error: nil
@@ -42,9 +42,19 @@ defmodule Dredd.Validators.UUIDTest do
       end
     end
 
+    property "correctly validates single uuid4 value given in a dataset" do
+      check all(uuid <- uuid_gen()) do
+        assert %Dataset{
+                 data: ^uuid,
+                 valid?: true,
+                 error: nil
+               } = Dredd.validate_uuid(%Dataset{data: uuid})
+      end
+    end
+
     property "does not validate non-uuid4 value" do
       check all(wrong_uuid <- invalid_uuid_gen()) do
-        assert %SingleResult{
+        assert %Dataset{
                  data: ^wrong_uuid,
                  valid?: false,
                  error: %SingleError{

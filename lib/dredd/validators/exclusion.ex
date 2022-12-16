@@ -3,15 +3,15 @@ defmodule Dredd.Validators.Exclusion do
 
   @default_message "is reserved"
 
-  def call(dataset, field, enum, opts \\ []) do
+  def call(dataset, enum, opts \\ []) do
     dataset = Dredd.Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = dataset.data
 
     message = Keyword.get(opts, :message, @default_message)
 
     if value in enum do
-      Dredd.add_error(dataset, field, message, validation: :exclusion, enum: enum)
+      Dredd.set_single_error(dataset, message, :exclusion, %{enum: enum})
     else
       dataset
     end

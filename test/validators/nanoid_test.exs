@@ -2,7 +2,10 @@ defmodule Dredd.Validators.NanoIDTest do
   use ExUnit.Case, async: true
   use ExUnitProperties
 
-  alias Dredd.Dataset
+  alias Dredd.{
+    Dataset,
+    SingleError
+  }
 
   def nanoid_gen(len) do
     string([?a..?z, ?A..?Z, ?0..?9, ?_, ?-], length: len)
@@ -10,32 +13,17 @@ defmodule Dredd.Validators.NanoIDTest do
 
   describe "validate_nanoid" do
     property "correctly validates all nanoIDs given in a map" do
-      check all(
-              nanoid <- nanoid_gen(21),
-              foo <- term(),
-              bar <- term()
-            ) do
-        data = %{nanoid: nanoid, foo: foo, bar: bar}
-
-        result =
-          data
-          |> Dredd.validate_required(:nanoid)
-          |> Dredd.validate_nanoid(:nanoid)
-
+      check all(nanoid <- nanoid_gen(21)) do
         assert %Dataset{
-                 data: ^data,
+                 data: ^nanoid,
                  valid?: true,
-                 errors: []
-               } = result
+                 error: nil
+               } = Dredd.validate_nanoid(nanoid)
       end
     end
 
     property "does not validate non-NanoID data given in a map" do
-      check all(
-              wrong_nanoid <- term(),
-              foo <- term(),
-              bar <- term()
-            ) do
+      check all(wrong_nanoid <- term()) do
         wrong_nanoid =
           if is_binary(wrong_nanoid) do
             # invalidate all string just to be sure
@@ -44,13 +32,15 @@ defmodule Dredd.Validators.NanoIDTest do
             wrong_nanoid
           end
 
-        data = %{nanoid: wrong_nanoid, foo: foo, bar: bar}
-
         assert %Dataset{
-                 data: ^data,
+                 data: ^wrong_nanoid,
                  valid?: false,
-                 errors: [nanoid: [{"is not a valid NanoID", [validation: :nanoid]}]]
-               } = Dredd.validate_nanoid(data, :nanoid)
+                 error: %SingleError{
+                   validator: :nanoid,
+                   message: "is not a valid NanoID",
+                   metadata: %{}
+                 }
+               } = Dredd.validate_nanoid(wrong_nanoid)
       end
     end
   end

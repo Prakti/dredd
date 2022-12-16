@@ -3,17 +3,17 @@ defmodule Dredd.Validators.Format do
 
   @default_message "has invalid format"
 
-  def call(dataset, field, format, opts \\ []) do
+  def call(dataset, format, opts \\ []) do
     dataset = Dredd.Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = dataset.data
 
     message = Keyword.get(opts, :message, @default_message)
 
     if value == nil || value == "" || value =~ format do
       dataset
     else
-      Dredd.add_error(dataset, field, message, validation: :format)
+      Dredd.set_single_error(dataset, message, :format)
     end
   end
 end

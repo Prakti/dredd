@@ -6,18 +6,18 @@ defmodule Dredd.Validators.NanoID do
   @default_message "is not a valid NanoID"
   @default_length 21
 
-  def call(dataset, field, opts \\ []) do
+  def call(dataset, opts \\ []) do
     dataset = Dredd.Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = dataset.data
 
     message = Keyword.get(opts, :message, @default_message)
     length = Keyword.get(opts, :length, @default_length)
 
     if value == nil || is_nanoid?(value) do
-      Dredd.validate_length(dataset, field, is: length, count: :bytes)
+      Dredd.validate_length(value, is: length, count: :bytes)
     else
-      Dredd.add_error(dataset, field, message, validation: :nanoid)
+      Dredd.set_single_error(dataset, message, :nanoid)
     end
   end
 

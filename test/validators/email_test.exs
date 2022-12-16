@@ -55,70 +55,62 @@ defmodule Dredd.Validators.EmailTest do
 
   describe "validate_email data from a map" do
     property "correctly validates emails given in a map" do
-      check all(
-              email <- email(),
-              foo <- term(),
-              bar <- term()
-            ) do
-        data = %{email: email, foo: foo, bar: bar}
+      check all(email <- email()) do
+        data = email
 
-        result = data |> Dredd.validate_email(:email)
+        result = Dredd.validate_email(email)
 
         assert result.data == data
         assert result.valid? == true
-        assert result.errors == []
+        assert result.error == nil
       end
     end
 
     property "rejects everything that is not a valid email given in a map" do
-      check all(
-              no_email <- invalid_email(),
-              foo <- term(),
-              bar <- term()
-            ) do
-        data = %{email: no_email, foo: foo, bar: bar}
+      check all(no_email <- invalid_email()) do
+        data = no_email
 
         assert %Dredd.Dataset{
                  data: ^data,
                  valid?: false,
-                 errors: [email: [{"is not a valid email address", [validation: :email]}]]
-               } = Dredd.validate_email(data, :email)
+                 error: %Dredd.SingleError{
+                   validator: :email,
+                   message: "is not a valid email address",
+                   metadata: %{}
+                 }
+               } = Dredd.validate_email(data)
       end
     end
   end
 
   describe "validate_email data from a Dataset" do
     property "correctly validates emails given in a Dataset" do
-      check all(
-              email <- email(),
-              foo <- term(),
-              bar <- term()
-            ) do
-        data = %{email: email, foo: foo, bar: bar}
+      check all(email <- email()) do
+        data = email
         dataset = Dataset.new(data)
 
-        result = dataset |> Dredd.validate_email(:email)
+        result = Dredd.validate_email(dataset)
 
         assert result.data == data
         assert result.valid? == true
-        assert result.errors == []
+        assert result.error == nil
       end
     end
 
     property "rejects everything that is not a valid email given in a Dataset" do
-      check all(
-              no_email <- invalid_email(),
-              foo <- term(),
-              bar <- term()
-            ) do
-        data = %{email: no_email, foo: foo, bar: bar}
+      check all(no_email <- invalid_email()) do
+        data = no_email
         dataset = Dataset.new(data)
 
         assert %Dredd.Dataset{
                  data: ^data,
                  valid?: false,
-                 errors: [email: [{"is not a valid email address", [validation: :email]}]]
-               } = Dredd.validate_email(dataset, :email)
+                 error: %Dredd.SingleError{
+                   validator: :email,
+                   message: "is not a valid email address",
+                   metadata: %{}
+                 }
+               } = Dredd.validate_email(dataset)
       end
     end
   end

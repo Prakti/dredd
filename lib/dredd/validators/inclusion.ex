@@ -3,17 +3,17 @@ defmodule Dredd.Validators.Inclusion do
 
   @default_message "is invalid"
 
-  def call(dataset, field, enum, opts \\ []) do
+  def call(dataset, enum, opts \\ []) do
     dataset = Dredd.Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = dataset.data
 
     message = Keyword.get(opts, :message, @default_message)
 
     if value == nil || value == "" || value in enum do
       dataset
     else
-      Dredd.add_error(dataset, field, message, validation: :inclusion, enum: enum)
+      Dredd.set_single_error(dataset, message, :inclusion, %{enum: enum})
     end
   end
 end

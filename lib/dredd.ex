@@ -92,8 +92,8 @@ defmodule Dredd do
 
   * `:message` - error message, defaults to "must be accepted"
   """
-  @spec validate_acceptance(map, atom, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_acceptance(dataset, field, opts \\ []),
+  @spec validate_acceptance(any, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_acceptance(dataset, opts \\ []),
     to: Dredd.Validators.Acceptance,
     as: :call
 
@@ -154,8 +154,8 @@ defmodule Dredd do
 
   * `:message` - error message, defaults to "is reserved"
   """
-  @spec validate_exclusion(map, atom, Enum.t(), Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_exclusion(dataset, field, enum, opts \\ []),
+  @spec validate_exclusion(any, Enum.t(), Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_exclusion(dataset, enum, opts \\ []),
     to: Dredd.Validators.Exclusion,
     as: :call
 
@@ -166,8 +166,8 @@ defmodule Dredd do
 
   * `:message` - error message, defaults to "has invalid format"
   """
-  @spec validate_format(map, atom, Regex.t(), Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_format(dataset, field, format, opts \\ []),
+  @spec validate_format(any, Regex.t(), Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_format(dataset, format, opts \\ []),
     to: Dredd.Validators.Format,
     as: :call
 
@@ -179,8 +179,8 @@ defmodule Dredd do
 
   * `:message` - error message, defaults to "is invalid"
   """
-  @spec validate_inclusion(map, atom, Enum.t(), Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_inclusion(dataset, field, enum, opts \\ []),
+  @spec validate_inclusion(any, Enum.t(), Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_inclusion(dataset, enum, opts \\ []),
     to: Dredd.Validators.Inclusion,
     as: :call
 
@@ -209,8 +209,8 @@ defmodule Dredd do
       * “should have at least %{count} item(s)”
       * “should have at most %{count} item(s)”
   """
-  @spec validate_length(map, atom, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_length(dataset, field, opts),
+  @spec validate_length(any, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_length(dataset, opts),
     to: Dredd.Validators.Length,
     as: :call
 
@@ -244,8 +244,8 @@ defmodule Dredd do
 
   * `:message` - error message, defaults to "has invalid type"
   """
-  @spec validate_type(map, atom, type_t, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_type(dataset, field, type, opts \\ []),
+  @spec validate_type(any, type_t, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_type(dataset, type, opts \\ []),
     to: Dredd.Validators.Type,
     as: :call
 
@@ -258,8 +258,8 @@ defmodule Dredd do
   ## Options
   * `:message` - error message, default to "is not a valid email address"
   """
-  @spec validate_email(map, atom, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_email(dataset, field, opts \\ []),
+  @spec validate_email(any, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_email(dataset, opts \\ []),
     to: Dredd.Validators.Email,
     as: :call
 
@@ -271,7 +271,7 @@ defmodule Dredd do
   * `:message` - error message, defaults to "is not a valid UUID"
   """
   @spec validate_uuid(any, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_uuid(data, opts \\ []),
+  defdelegate validate_uuid(dataset, opts \\ []),
     to: Dredd.Validators.UUID,
     as: :call
 
@@ -282,8 +282,8 @@ defmodule Dredd do
 
   * `:message` - error message, defaults to "is not a valid UUID"
   """
-  @spec validate_nanoid(map, atom, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_nanoid(dataset, field, opts \\ []),
+  @spec validate_nanoid(any, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_nanoid(dataset, opts \\ []),
     to: Dredd.Validators.NanoID,
     as: :call
 
@@ -291,11 +291,10 @@ defmodule Dredd do
   Validates if the given value is enumerable (i.e.: list, tuple or map, ...)
   Usually this should be used to validate lists of values.
   """
-  @spec validate_enumerable(any(), Keyword.t()) :: Dredd.SingleResult.t()
-  defdelegate validate_enumerable(value, opts \\ []),
+  @spec validate_enumerable(any(), Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_enumerable(dataset, opts \\ []),
     to: Dredd.Validators.Enumerable,
     as: :call
-
 
   @doc """
   Adds an error to the dataset.
@@ -326,5 +325,17 @@ defmodule Dredd do
       |> Keyword.update(field, [error], &Enum.concat(&1, [error]))
 
     %{dataset | errors: errors, valid?: false}
+  end
+
+  def set_single_error(dataset, message, validator, metadata \\ %{}) do
+    %Dredd.Dataset{
+      dataset
+      | valid?: false,
+        error: %Dredd.SingleError{
+          validator: validator,
+          message: message,
+          metadata: metadata
+        }
+    }
   end
 end

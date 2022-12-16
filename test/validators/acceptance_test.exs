@@ -1,50 +1,59 @@
 defmodule Dredd.Validators.AcceptanceTest do
   use ExUnit.Case, async: true
 
+  alias Dredd.{
+    Dataset,
+    SingleError
+  }
+
   describe "validate_acceptance/3" do
     test "adds an error if value is not `true`" do
-      field = :field
-      data = Map.new([{field, false}])
+      data = false
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [{^field, [{"must be accepted", validation: :acceptance}]}],
+               error: %SingleError{
+                 validator: :acceptance,
+                 message: "must be accepted",
+                 metadata: %{}
+               },
                valid?: false
-             } = Dredd.validate_acceptance(data, field)
+             } = Dredd.validate_acceptance(data)
     end
 
     test "does not add an error if value is `true`" do
-      field = :field
-      data = Map.new([{field, true}])
+      data = true
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [],
+               error: nil,
                valid?: true
-             } = Dredd.validate_acceptance(data, field)
+             } = Dredd.validate_acceptance(data)
     end
 
     test "does not add an error if value is `nil`" do
-      field = :field
-      data = Map.new([{field, nil}])
+      data = nil
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [],
+               error: nil,
                valid?: true
-             } = Dredd.validate_acceptance(data, field)
+             } = Dredd.validate_acceptance(data)
     end
 
     test "uses a custom error message when provided" do
-      field = :field
       message = "message"
-      data = Map.new([{field, false}])
+      data = false
 
-      assert %Dredd.Dataset{
+      assert %Dataset{
                data: ^data,
-               errors: [{^field, [{^message, validation: :acceptance}]}],
+               error: %SingleError{
+                 validator: :acceptance,
+                 message: ^message,
+                 metadata: %{}
+               },
                valid?: false
-             } = Dredd.validate_acceptance(data, field, message: message)
+             } = Dredd.validate_acceptance(data, message: message)
     end
   end
 end

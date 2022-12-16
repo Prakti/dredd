@@ -19,10 +19,10 @@ defmodule Dredd.Validators.Length do
     }
   }
 
-  def call(dataset, field, opts) do
+  def call(dataset, opts) do
     dataset = Dredd.Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field) || ""
+    value = dataset.data
 
     opts =
       opts
@@ -30,11 +30,11 @@ defmodule Dredd.Validators.Length do
       |> Enum.into(%{})
 
     case validate(value, opts) do
-      nil ->
+      :ok ->
         dataset
 
-      error ->
-        Dredd.put_error(dataset, field, error)
+      {message, validator, metadata} ->
+        Dredd.set_single_error(dataset, message, validator, metadata)
     end
   end
 
@@ -43,7 +43,7 @@ defmodule Dredd.Validators.Length do
   #
 
   defp validate("", _opts) do
-    nil
+    :ok
   end
 
   defp validate(value, %{count: :codepoints} = opts) when is_binary(value) do
@@ -63,28 +63,28 @@ defmodule Dredd.Validators.Length do
   end
 
   defp validate(_value, _opts) do
-    nil
+    :ok
   end
 
   defp check(type, len, %{is: count} = opts) when len != count do
     message = Map.get(opts, :message, get_in(@default_message, [type, :is]))
 
-    {message, count: count, kind: :is, type: type, validation: :length}
+    {message, :length, %{count: count, kind: :is, type: type}}
   end
 
   defp check(type, len, %{min: count} = opts) when len < count do
     message = Map.get(opts, :message, get_in(@default_message, [type, :min]))
 
-    {message, count: count, kind: :min, type: type, validation: :length}
+    {message, :length, %{count: count, kind: :min, type: type}}
   end
 
   defp check(type, len, %{max: count} = opts) when len > count do
     message = Map.get(opts, :message, get_in(@default_message, [type, :max]))
 
-    {message, count: count, kind: :max, type: type, validation: :length}
+    {message, :length, %{count: count, kind: :max, type: type}}
   end
 
   defp check(_type, _len, _opts) do
-    nil
+    :ok
   end
 end
