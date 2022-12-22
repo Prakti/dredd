@@ -62,5 +62,29 @@ defmodule Dredd.Validators.ExclusionTest do
                valid?: true
              } = Dredd.validate_exclusion(data, ["a value"])
     end
+
+    test "does an early abort if given dataset is already invalid" do
+      enum = ["foo"]
+
+      data = %Dataset{
+        data: "foo",
+        error: %SingleError{
+          validator: :passthrough,
+          message: "testing early abort",
+          metadata: %{}
+        },
+        valid?: false
+      }
+
+      assert %Dataset{
+               data: "foo",
+               error: %SingleError{
+                 validator: :passthrough,
+                 message: "testing early abort",
+                 metadata: %{}
+               },
+               valid?: false
+             } = Dredd.validate_exclusion(data, enum)
+    end
   end
 end

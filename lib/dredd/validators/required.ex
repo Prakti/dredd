@@ -1,27 +1,30 @@
 defmodule Dredd.Validators.Required do
   @moduledoc false
 
+  alias Dredd.{
+    Dataset,
+    SingleError
+  }
+
   @default_message "can't be blank"
 
-  def call(dataset, fields, opts \\ []) do
-    dataset = Dredd.Dataset.new(dataset)
+  def call(%Dataset{valid?: false} = dataset, _opts) do
+    dataset
+  end
 
-    fields = List.wrap(fields)
+  def call(dataset, opts) do
+    dataset = Dataset.new(dataset)
 
     message = Keyword.get(opts, :message, @default_message)
+    trim? = Keyword.get(opts, :trim?, true)
 
-    Enum.reduce(fields, dataset, fn field, acc ->
-      trimmed_value =
-        dataset.data
-        |> Map.get(field)
-        |> maybe_trim_value(Keyword.get(opts, :trim?, true))
+    trimmed_value = maybe_trim_value(dataset.data, trim?)
 
-      if trimmed_value in [nil, ""] do
-        Dredd.add_error(acc, field, message, validation: :required)
-      else
-        acc
-      end
-    end)
+    if trimmed_value in [nil, ""] do
+      Dredd.set_single_error(dataset, message, :required)
+    else
+      dataset
+    end
   end
 
   #

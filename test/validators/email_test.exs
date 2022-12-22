@@ -113,5 +113,27 @@ defmodule Dredd.Validators.EmailTest do
                } = Dredd.validate_email(dataset)
       end
     end
+
+    test "does an early abort if an already invalid dataset is given" do
+      data = %Dredd.Dataset{
+        data: nil,
+        valid?: false,
+        error: %Dredd.SingleError{
+          validator: :passthrough,
+          message: "testing early abort",
+          metadata: %{}
+        }
+      }
+
+      assert %Dredd.Dataset{
+               data: nil,
+               valid?: false,
+               error: %Dredd.SingleError{
+                 validator: :passthrough,
+                 message: "testing early abort",
+                 metadata: %{}
+               }
+             } = Dredd.validate_email(data)
+    end
   end
 end

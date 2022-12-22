@@ -12,6 +12,10 @@ defmodule Dredd.Validators.Type do
 
   @default_message "has invalid type"
 
+  def call(%Dredd.Dataset{valid?: false} = dataset, _opts) do
+    dataset
+  end
+
   def call(dataset, type, opts \\ []) do
     dataset = Dredd.Dataset.new(dataset)
 
@@ -56,6 +60,16 @@ defmodule Dredd.Validators.Type do
 
   defp check(:string, value) do
     is_binary(value)
+  end
+
+  # TODO: 2022-12-22 - Write test case for struct type
+  defp check(:struct, value) do
+    is_map(value) || is_struct(value) || Keyword.keyword?(value)
+  end
+
+  # TODO: 2022-12-22 - Write test case for struct type
+  defp check(:enumerable, value) do
+    Enumerable.impl_for(value) != nil
   end
 
   defp check(type, _value) do

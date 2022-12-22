@@ -215,5 +215,27 @@ defmodule Validators.TypeTest do
                valid?: false
              } = Dredd.validate_type(data, :boolean, message: message)
     end
+
+    test "does an early abort if given dataset is already invalid" do
+      data = %Dredd.Dataset{
+        data: nil,
+        error: %SingleError{
+          validator: :passthrough,
+          message: "testing early abort",
+          metadata: %{}
+        },
+        valid?: false
+      }
+
+      assert %Dredd.Dataset{
+               data: nil,
+               error: %SingleError{
+                 validator: :passthrough,
+                 message: "testing early abort",
+                 metadata: %{}
+               },
+               valid?: false
+             } = Dredd.validate_type(data, :boolean)
+    end
   end
 end

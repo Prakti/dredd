@@ -3,7 +3,13 @@ defmodule Dredd.Validators.Exclusion do
 
   @default_message "is reserved"
 
-  def call(dataset, enum, opts \\ []) do
+  def call(dataset, enum, opts \\ [])
+
+  def call(%Dredd.Dataset{valid?: false} = dataset, _enum, _opts) do
+    dataset
+  end
+
+  def call(dataset, enum, opts) do
     dataset = Dredd.Dataset.new(dataset)
 
     value = dataset.data

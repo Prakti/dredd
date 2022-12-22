@@ -3,7 +3,13 @@ defmodule Dredd.Validators.Format do
 
   @default_message "has invalid format"
 
-  def call(dataset, format, opts \\ []) do
+  def call(dataset, format, opts \\ [])
+
+  def call(%Dredd.Dataset{valid?: false} = dataset, _format, _opts) do
+    dataset
+  end
+
+  def call(dataset, format, opts) do
     dataset = Dredd.Dataset.new(dataset)
 
     value = dataset.data

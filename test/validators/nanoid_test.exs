@@ -43,5 +43,27 @@ defmodule Dredd.Validators.NanoIDTest do
                } = Dredd.validate_nanoid(wrong_nanoid)
       end
     end
+
+    test "does and early abort if given dataset is already invalid" do
+      data = %Dataset{
+        data: nil,
+        valid?: false,
+        error: %SingleError{
+          validator: :passthrough,
+          message: "testing early abort",
+          metadata: %{}
+        }
+      }
+
+      assert %Dataset{
+               data: nil,
+               valid?: false,
+               error: %SingleError{
+                 validator: :passthrough,
+                 message: "testing early abort",
+                 metadata: %{}
+               }
+             } = Dredd.validate_nanoid(data)
+    end
   end
 end

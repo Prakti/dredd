@@ -5,7 +5,13 @@ defmodule Dredd.Validators.Email do
 
   @default_message "is not a valid email address"
 
-  def call(dataset, opts \\ []) do
+  def call(dataset, opts \\ [])
+
+  def call(%Dredd.Dataset{valid?: false} = dataset, _opts) do
+    dataset
+  end
+
+  def call(dataset, opts) do
     dataset = Dredd.Dataset.new(dataset)
 
     value = dataset.data

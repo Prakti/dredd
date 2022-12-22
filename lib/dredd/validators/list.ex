@@ -1,38 +1,49 @@
 defmodule Dredd.Validators.List do
   @moduledoc false
 
-  @is_not_list_message "is not a list"
+  alias Dredd.{
+    Dataset,
+    ListErrors
+  }
 
-  def call(data, field, validator) do
-    dataset = Dredd.Dataset.new(data)
+  def call(%Dataset{valid?: false} = dataset, _validator) do
+    dataset
+  end
 
-    value = Map.get(dataset.data, field)
+  def call(dataset, validator) do
+    dataset = Dredd.Dataset.new(dataset)
+    enumerable_result = Dredd.validate_type(dataset.data, :enumerable)
 
-    if is_list(value) do
-      indexed_list =
-        value
-        |> Enum.with_index(fn element, index -> {index, element} end)
+    if enumerable_result.valid? do
+      list_errors = validate_elements(dataset.data, validator)
 
-      list_errors =
-        indexed_list
-        |> Enum.reduce(%{}, fn {idx, value}, list_errors ->
-          fake_dataset = %{
-            field: value
+      if Enum.empty?(list_errors) do
+        dataset
+      else
+        %Dataset{
+          data: dataset.data,
+          valid?: false,
+          error: %ListErrors{
+            errors: list_errors
           }
-
-          result = validator.(fake_dataset, :field)
-
-          unless result.valid? do
-            error = Keyword.get(result.errors, :field)
-            Map.put(list_errors, idx, error)
-          else
-            list_errors
-          end
-        end)
-
-      Dredd.add_error(dataset, field, Map.to_list(list_errors), validation: :list)
+        }
+      end
     else
-      Dredd.add_error(dataset, field, @is_not_list_message, validation: :list)
+      enumerable_result
     end
+  end
+
+  defp validate_elements(enumerable, validator) do
+    enumerable
+    |> Enum.with_index(fn element, index -> {index, element} end)
+    |> Enum.reduce(%{}, fn {idx, value}, list_errors ->
+      result = validator.(value)
+
+      if result.valid? do
+        list_errors
+      else
+        Map.put(list_errors, idx, result.error)
+      end
+    end)
   end
 end

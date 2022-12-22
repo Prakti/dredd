@@ -5,6 +5,10 @@ defmodule Dredd.Validators.UUID do
 
   @default_message "is not a valid uuid"
 
+  def call(%Dredd.Dataset{valid?: false} = dataset, _opts) do
+    dataset
+  end
+
   def call(dataset, _opts) do
     dataset = Dredd.Dataset.new(dataset)
 

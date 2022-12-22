@@ -55,5 +55,27 @@ defmodule Dredd.Validators.AcceptanceTest do
                valid?: false
              } = Dredd.validate_acceptance(data, message: message)
     end
+
+    test "does an early abort if given dataset is already invalid" do
+      data = %Dataset{
+        data: "foo",
+        error: %SingleError{
+          validator: :passthrough,
+          message: "testing early abort",
+          metadata: %{}
+        },
+        valid?: false
+      }
+
+      assert %Dataset{
+               data: "foo",
+               error: %SingleError{
+                 validator: :passthrough,
+                 message: "testing early abort",
+                 metadata: %{}
+               },
+               valid?: false
+             } = Dredd.validate_acceptance(data)
+    end
   end
 end

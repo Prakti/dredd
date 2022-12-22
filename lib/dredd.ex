@@ -97,53 +97,30 @@ defmodule Dredd do
     to: Dredd.Validators.Acceptance,
     as: :call
 
-  @doc """
-  Validates the value of a given field matches it's confirmation field.
-
-  By default, the field will be checked against a field with the same name
-  but appended with `_confirmation`. It’s possible to provide a custom field by
-  providing a value to the `:confirmation_field` option.
-
-  Note that if the confirmation field is `nil` or missing, by default, an error
-  will not be added. You can specify that the confirmation field is required in
-  the options (see below).
-
-  ## Options
-
-  * `:confirmation_field` - name of the field to validate against
-  * `:message` - error message, defaults to "does not match"
-  * `:required?` - whether the confirmation field must contain a value
-  """
-  @spec validate_confirmation(map, atom, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_confirmation(dataset, field, opts \\ []),
-    to: Dredd.Validators.Confirmation,
-    as: :call
-
-  @doc """
-  Applies a validator function to a field containing an struct itself.
-
-  ## Example
-
-      validator = fn(metadata) -> Dredd.validate_required(metadata, :key) end
-
-      data = %{metadata: {value: "a value"}}
-
-      validate_embed(data, :metadata, validator)
-      #> %Dredd.Dataset{errors: [metadata: [{key: [{"can't be blank", validation: :required}] }] ], valid?: false}
-  """
-  @spec validate_object(map, atom, fun) :: Dredd.Dataset.t()
-  defdelegate validate_object(dataset, field, validator),
-    to: Dredd.Validators.Object,
-    as: :call
+  @type single_validator_fun :: (any() -> Dredd.Dataset.t())
 
   @doc """
     Applies a validator function to a each element of a list contained in a field.
 
   ## TODO: 2022-11-20 - Write Example
   """
-  @spec validate_list(map, atom, fun) :: Dredd.Dataset.t()
-  defdelegate validate_list(dataset, field, validator),
+  @spec validate_list(any(), single_validator_fun()) :: Dredd.Dataset.t()
+  defdelegate validate_list(dataset, validator),
     to: Dredd.Validators.List,
+    as: :call
+
+  @type validator_map :: %{ any() => single_validator_fun() }
+
+  @doc """
+    Validates the structure of a Map, Keyword List, Struct or anything else
+    that supports the Access behaviour and whose structure can be represented
+    by a map.
+
+  ## TODO: 2022-12-22 - Write Example
+  """
+  @spec validate_struct(any(), validator_map()) :: Dredd.Dataset.t()
+  defdelegate validate_struct(dataset, validator_map),
+    to: Dredd.Validators.Struct,
     as: :call
 
   @doc """
@@ -215,16 +192,15 @@ defmodule Dredd do
     as: :call
 
   @doc """
-  Validates that one or more fields is not empty. This means they are neither
-  the empty string `""` nor they are `nil`.
+  Validates that the given value is neither null nor the empty string. 
 
-  ## Options
+  ## Optiions
 
-  * `:message` - error message, defaults to "must be accepted"
-  * `:trim?` - remove whitespace before validating, defaults to `true`
+  * `:trim?` - trim whitespaces if value is a string
+  * `:message` - error message, defaults to "can't be blank"
   """
-  @spec validate_required(map, atom | [atom], Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_required(dataset, fields, opts \\ []),
+  @spec validate_required(any, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_required(dataset, opts \\ []),
     to: Dredd.Validators.Required,
     as: :call
 
@@ -286,46 +262,6 @@ defmodule Dredd do
   defdelegate validate_nanoid(dataset, opts \\ []),
     to: Dredd.Validators.NanoID,
     as: :call
-
-  @doc """
-  Validates if the given value is enumerable (i.e.: list, tuple or map, ...)
-  Usually this should be used to validate lists of values.
-  """
-  @spec validate_enumerable(any(), Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_enumerable(dataset, opts \\ []),
-    to: Dredd.Validators.Enumerable,
-    as: :call
-
-  @doc """
-  Adds an error to the dataset.
-
-  An optional keyword list can be used to provide additional contextual
-  information about the error.
-  """
-  @spec add_error(Dredd.Dataset.t(), atom, String.t(), Keyword.t()) :: Dredd.Dataset.t()
-  def add_error(dataset, field, message, keys \\ []) do
-    put_error(dataset, field, {message, keys})
-  end
-
-  @doc false
-  def put_error(dataset, field, error) when is_list(error) do
-    errors =
-      dataset
-      |> Map.get(:errors)
-      |> Keyword.update(field, error, &Enum.concat(&1, error))
-
-    %{dataset | errors: errors, valid?: false}
-  end
-
-  @doc false
-  def put_error(dataset, field, error) do
-    errors =
-      dataset
-      |> Map.get(:errors)
-      |> Keyword.update(field, [error], &Enum.concat(&1, [error]))
-
-    %{dataset | errors: errors, valid?: false}
-  end
 
   def set_single_error(dataset, message, validator, metadata \\ %{}) do
     %Dredd.Dataset{

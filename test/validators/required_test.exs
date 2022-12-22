@@ -2,135 +2,108 @@ defmodule Dredd.Validators.RequiredTest do
   use ExUnit.Case, async: true
   use ExUnitProperties
 
-  # TODO: 2022-12-15 - make this a separate validator that can work on maps, stucts and keyword lists
+  alias Dredd.{
+    Dataset,
+    SingleError
+  }
 
-  describe "validate_required/3" do
-    # test "adds an error if value is `nil`" do
-    #   field = :field
-    #
-    #   data = %{}
-    #
-    #   assert %Dredd.Dataset{
-    #            data: ^data,
-    #            errors: [{^field, [{"can't be blank", validation: :required}]}],
-    #            valid?: false
-    #          } = Dredd.validate_required(data, field)
-    # end
-    #
-    # test "adds an error if value is an empty string" do
-    #   field = :field
-    #
-    #   data = Map.new([{field, ""}])
-    #
-    #   assert %Dredd.Dataset{
-    #            data: ^data,
-    #            errors: [{^field, [{"can't be blank", validation: :required}]}],
-    #            valid?: false
-    #          } = Dredd.validate_required(data, field)
-    # end
-    #
-    # property "adds an error if value is only whitespace and `:trim?` is `true`" do
-    #   check all(whitespaces <- string([?\s, ?\t, ?\n, ?\v, ?\f, ?\r], min_length: 1)) do
-    #     field = :field
-    #     data = Map.new([{field, whitespaces}])
-    #
-    #     result = Dredd.validate_required(data, field, trim?: true)
-    #
-    #     assert %Dredd.Dataset{} = result
-    #     assert result.valid? == false
-    #     assert result.data == data
-    #     assert result.errors == [{field, [{"can't be blank", validation: :required}]}]
-    #   end
-    # end
-    #
-    # property "adds multiple errors if a list of fields is provided" do
-    #   check all(fields <- list_of(atom(:alphanumeric), min_length: 1)) do
-    #     data = %{}
-    #
-    #     result = Dredd.validate_required(data, fields)
-    #
-    #     assert %Dredd.Dataset{} = result
-    #     assert result.valid? == false
-    #     assert result.data == data
-    #
-    #     Enum.each(fields, fn field ->
-    #       assert [{"can't be blank", validation: :required} | _] =
-    #                Keyword.get(result.errors, field)
-    #     end)
-    #   end
-    # end
-    #
-    # test "adds an error for field regardless of placement in list" do
-    #   field_a = :field_a
-    #   field_b = :field_b
-    #
-    #   data = Map.new([{field_a, ""}, {field_b, "hi"}])
-    #
-    #   assert %Dredd.Dataset{
-    #            data: ^data,
-    #            errors: [
-    #              {^field_a, [{"can't be blank", validation: :required}]}
-    #            ],
-    #            valid?: false
-    #          } = Dredd.validate_required(data, [field_a, field_b])
-    # end
-    #
-    # property "does not add an error if value is not nil or only whitespace" do
-    #   check all(str_value <- string(:printable, min_length: 1)) do
-    #     field = :field
-    #     data = Map.new([{field, str_value}])
-    #
-    #     result = Dredd.validate_required(data, field)
-    #
-    #     assert %Dredd.Dataset{} = result
-    #     assert result.valid? == true
-    #     assert result.data == data
-    #     assert result.errors == []
-    #   end
-    # end
-    #
-    # property "does not add an error if value is only whitespace and `:trim?` is `false`" do
-    #   check all(whitespaces <- string([?\s, ?\t, ?\n, ?\v, ?\f, ?\r], min_length: 1)) do
-    #     field = :field
-    #     data = Map.new([{field, whitespaces}])
-    #
-    #     result = Dredd.validate_required(data, field, trim?: false)
-    #
-    #     assert %Dredd.Dataset{} = result
-    #     assert result.valid? == true
-    #     assert result.data == data
-    #     assert result.errors == []
-    #   end
-    # end
-    #
-    # property "does not add an error if value is not a string" do
-    #   check all(
-    #           data <- term(),
-    #           not (is_binary(data) and String.valid?(data))
-    #         ) do
-    #     field = :field
-    #     data = Map.new([{field, data}])
-    #
-    #     result = Dredd.validate_required(data, field)
-    #
-    #     assert %Dredd.Dataset{} = result
-    #     assert result.valid? == true
-    #     assert result.data == data
-    #     assert result.errors == []
-    #   end
-    # end
-    #
-    # test "uses a custom error message when provided" do
-    #   field = :field
-    #   message = "message"
-    #
-    #   data = %{}
-    #
-    #   assert %Dredd.Dataset{
-    #            data: ^data,
-    #            errors: [{^field, [{^message, validation: :required}]}],
-    #            valid?: false
-    #          } = Dredd.validate_required(data, field, message: message)
-    # end
+  describe "validate_required/2" do
+    test "adds an error if value is `nil`" do
+      data = nil
+
+      assert %Dataset{
+               data: ^data,
+               valid?: false,
+               error: %SingleError{
+                 validator: :required,
+                 message: "can't be blank",
+                 metadata: %{}
+               }
+             } = Dredd.validate_required(data)
+    end
+
+    test "adds an error if value is an empty string" do
+      data = ""
+
+      assert %Dredd.Dataset{
+               data: ^data,
+               valid?: false,
+               error: %SingleError{
+                 validator: :required,
+                 message: "can't be blank",
+                 metadata: %{}
+               }
+             } = Dredd.validate_required(data)
+    end
+
+    property "adds an error if value is only whitespace and `:trim?` is `true`" do
+      check all(whitespaces <- string([?\s, ?\t, ?\n, ?\v, ?\f, ?\r], min_length: 1)) do
+        data = whitespaces
+
+        assert %Dredd.Dataset{
+                 data: ^data,
+                 valid?: false,
+                 error: %SingleError{
+                   validator: :required,
+                   message: "can't be blank",
+                   metadata: %{}
+                 }
+               } = Dredd.validate_required(data, trim?: true)
+      end
+    end
+
+    property "does not add an error if value is not nil or only whitespace" do
+      check all(str_value <- string(:printable, min_length: 1)) do
+        data = str_value
+
+        assert %Dredd.Dataset{
+                 data: ^data,
+                 valid?: true,
+                 error: nil
+              } = Dredd.validate_required(data)
+      end
+    end
+
+    property "does not add an error if value is only whitespace and `:trim?` is `false`" do
+      check all(whitespaces <- string([?\s, ?\t, ?\n, ?\v, ?\f, ?\r], min_length: 1)) do
+        data = whitespaces
+
+        assert %Dredd.Dataset{
+                 data: ^data,
+                 valid?: true,
+                 error: nil
+              } = Dredd.validate_required(data, trim?: false)
+      end
+    end
+
+    property "does not add an error if value is not a string" do
+      check all(
+              data <- term(),
+              not (is_binary(data) and String.valid?(data))
+            ) do
+
+        assert %Dredd.Dataset{
+                 data: ^data,
+                 valid?: true,
+                 error: nil
+              } = Dredd.validate_required(data)
+      end
+    end
+
+    test "uses a custom error message when provided" do
+      message = "message"
+
+      data = nil
+
+      assert %Dredd.Dataset{
+               data: ^data,
+               valid?: false,
+               error: %SingleError{
+                 validator: :required,
+                 message: ^message,
+                 metadata: %{}
+               }
+             } = Dredd.validate_required(data, message: message)
+    end
   end
 end

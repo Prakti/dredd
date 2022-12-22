@@ -19,6 +19,10 @@ defmodule Dredd.Validators.Length do
     }
   }
 
+  def call(%Dredd.Dataset{valid?: false} = dataset, _opts) do
+    dataset
+  end
+
   def call(dataset, opts) do
     dataset = Dredd.Dataset.new(dataset)
 

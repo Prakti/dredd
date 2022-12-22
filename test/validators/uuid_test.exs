@@ -3,8 +3,8 @@ defmodule Dredd.Validators.UUIDTest do
   use ExUnitProperties
 
   alias Dredd.{
-    SingleError,
-    Dataset
+    Dataset,
+    SingleError
   }
 
   def uuid_gen do
@@ -64,6 +64,28 @@ defmodule Dredd.Validators.UUIDTest do
                  }
                } = Dredd.validate_uuid(wrong_uuid)
       end
+    end
+
+    test "does an early abort if the given dataset is already invalid" do
+      data = %Dataset{
+        data: nil,
+        valid?: false,
+        error: %SingleError{
+          validator: :passthrouh,
+          message: "testing early abort",
+          metadata: %{}
+        }
+      }
+
+      assert %Dataset{
+               data: nil,
+               valid?: false,
+               error: %SingleError{
+                 validator: :passthrouh,
+                 message: "testing early abort",
+                 metadata: %{}
+               }
+             } = Dredd.validate_uuid(data)
     end
   end
 end

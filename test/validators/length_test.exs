@@ -534,5 +534,27 @@ defmodule Dredd.Validators.LengthTest do
                }
              } = Dredd.validate_length(value, is: count, message: message)
     end
+
+    test "does an early abort if given dataset is already invalid" do
+      data = %Dataset{
+        data: "foo",
+        valid?: false,
+        error: %SingleError{
+          validator: :passthrough,
+          message: "testing early abort",
+          metadata: %{}
+        }
+      }
+
+      assert %Dataset{
+               data: "foo",
+               valid?: false,
+               error: %SingleError{
+                 validator: :passthrough,
+                 message: "testing early abort",
+                 metadata: %{}
+               }
+             } = Dredd.validate_length(data, is: 10)
+    end
   end
 end
