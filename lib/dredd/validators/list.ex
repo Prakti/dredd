@@ -12,7 +12,7 @@ defmodule Dredd.Validators.List do
 
   def call(dataset, validator) do
     dataset = Dredd.Dataset.new(dataset)
-    enumerable_result = Dredd.validate_type(dataset.data, :enumerable)
+    enumerable_result = Dredd.validate_type(dataset.data, :list)
 
     if enumerable_result.valid? do
       list_errors = validate_elements(dataset.data, validator)

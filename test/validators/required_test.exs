@@ -90,6 +90,20 @@ defmodule Dredd.Validators.RequiredTest do
       end
     end
 
+    test "passes through invalid datasets and does not execute validation" do
+      value = %Dataset{
+        data: nil,
+        valid?: false,
+        error: %SingleError{
+          validator: :passthrough,
+          message: "testing passthrough",
+          metadata: %{}
+        }
+      }
+
+      assert ^value = Dredd.validate_required(value)
+    end
+
     test "uses a custom error message when provided" do
       message = "message"
 

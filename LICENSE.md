@@ -1,6 +1,5 @@
 # MIT License
 
-Copyright (c) 2021 Anthoniy Smitch
 Copyright (c) 2022 Marcus Autenrieth
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

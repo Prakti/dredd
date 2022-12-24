@@ -6,8 +6,6 @@ defmodule Dredd.Validators.NanoID do
   @default_message "is not a valid NanoID"
   @default_length 21
 
-  def call(dataset, opts \\ [])
-
   def call(%Dredd.Dataset{valid?: false} = dataset, _opts) do
     dataset
   end

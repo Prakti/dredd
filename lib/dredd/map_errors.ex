@@ -1,17 +1,17 @@
-defmodule Dredd.StructErrors do
+defmodule Dredd.MapErrors do
   @moduledoc """
   This datastructure shows for which fields in a struct validation failed.
   """
 
-  defstruct validator: :struct, errors: %{}
+  defstruct validator: :map, errors: %{}
 
   @type error_t ::
           Dredd.SingleError.t()
           | Dredd.ListErrors.t()
-          | Dredd.StructErrors.t()
+          | Dredd.MapErrors.t()
 
   @type t :: %__MODULE__{
-          validator: :struct,
+          validator: :map,
           errors: %{atom() => error_t}
         }
 end

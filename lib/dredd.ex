@@ -1,80 +1,11 @@
 defmodule Dredd do
   @moduledoc """
-  Dredd judges structs; it's a validator.
+  Dredd judges data for you. It's a validator for a wide range of
+  datastructures. 
 
-  Dredd was forked from [Justify][2]
+  See the [README][1] for a detailed guide.
 
-  Inspired heavily by [Ecto.Changeset][1], Dredd allows you to pipe a plain map
-  into a series of validation functions using a simple and familiar API. No
-  schemas or casting required.
-
-  [1]: https://hexdocs.pm/ecto/Ecto.Changeset.html
-  [2]: https://github.com/malomohq/justify
-
-  ### Example
-
-  ```elixir
-  dataset =
-    %{email: "this_is_not_an_email"}
-    |> Dredd.validate_required(:email)
-    |> Dredd.validate_format(:email, ~r/\S+@\S+/)
-
-  dataset.errors #=> [email: [{"has invalid format", validation: :format}]]
-  dataset.valid? #=> false
-  ```
-
-  Each validation function will return a `Dredd.Dataset` struct which can be
-  passed into the next function. If a validation error is encountered the dataset
-  will be marked as invalid and an error will be added to the struct.
-
-  ## Custom Validations
-
-  You can provide your own custom validations using the `Dredd.add_error/4`
-  function.
-
-  ### Example
-
-  ```elixir
-  defmodule MyValidator do
-    def validate_color(data, field, color) do
-      dataset = Dredd.Dataset.new(data)
-
-      value = Map.get(dataset.data, :field)
-
-      if value == color do
-        dataset
-      else
-        Dredd.add_error(dataset, field, "wrong color", validation: :color)
-      end
-    end
-  end
-  ```
-
-  Your custom validation can be used as part of a validation pipeline.
-
-  ### Example
-
-  ```elixir
-  dataset =
-    %{color: "brown"}
-    |> Dredd.validation_required(:color)
-    |> MyValidator.validate_color(:color, "green")
-
-  dataset.errors #=> [color: [{"wrong color", validation: :color}]]
-  dataset.valid? #=> false
-  ```
-
-  ## Supported Validations
-
-  * [`validate_acceptance/3`](https://hexdocs.pm/dredd/Dredd.html#validate_acceptance/3)
-  * [`validate_confirmation/3`](https://hexdocs.pm/dredd/Dredd.html#validate_confirmation/3)
-  * [`validate_embed/3`](https://hexdocs.pm/dredd/Dredd.html#validate_embed/3)
-  * [`validate_exclusion/4`](https://hexdocs.pm/dredd/Dredd.html#validate_exclusion/4)
-  * [`validate_format/4`](https://hexdocs.pm/dredd/Dredd.html#validate_format/4)
-  * [`validate_inclusion/4`](https://hexdocs.pm/dredd/Dredd.html#validate_inclusion/4)
-  * [`validate_length/3`](https://hexdocs.pm/dredd/Dredd.html#validate_length/3)
-  * [`validate_required/3`](https://hexdocs.pm/dredd/Dredd.html#validate_required/3)
-  * [`validate_type/4`](https://hexdocs.pm/dredd/Dredd.html#validate_type/4)
+  [1]: readme.html
   """
 
   @type type_t ::
@@ -84,6 +15,9 @@ defmodule Dredd do
           | :non_neg_integer
           | :pos_integer
           | :string
+          | :list
+          | :struct
+          | :map
 
   @doc """
   Validates the given field has a value of `true`.
@@ -109,7 +43,7 @@ defmodule Dredd do
     to: Dredd.Validators.List,
     as: :call
 
-  @type validator_map :: %{ any() => single_validator_fun() }
+  @type validator_map :: %{any() => single_validator_fun()}
 
   @doc """
     Validates the structure of a Map, Keyword List, Struct or anything else
@@ -118,9 +52,9 @@ defmodule Dredd do
 
   ## TODO: 2022-12-22 - Write Example
   """
-  @spec validate_struct(any(), validator_map()) :: Dredd.Dataset.t()
-  defdelegate validate_struct(dataset, validator_map),
-    to: Dredd.Validators.Struct,
+  @spec validate_map(any(), validator_map()) :: Dredd.Dataset.t()
+  defdelegate validate_map(dataset, validator_map),
+    to: Dredd.Validators.Map,
     as: :call
 
   @doc """
@@ -167,8 +101,7 @@ defmodule Dredd do
   ## Options
 
   * `:count` - how to calculate the length of a string. Must be one of
-               `:codepoints`, `:graphemes` or `:bytes`. Defaults to
-               `:graphemes`.
+    `:codepoints`, `:graphemes` or `:bytes`. Defaults to `:graphemes`.
   * `:is` - the exact length match
   * `:min` - match a length greater than or equal to
   * `:max` - match a length less than or equal to

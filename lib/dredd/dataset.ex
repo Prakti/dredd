@@ -10,7 +10,7 @@ defmodule Dredd.Dataset do
   @type error_t ::
           Dredd.SingleError.t()
           | Dredd.ListErrors.t()
-          | Dredd.StructErrors.t()
+          | Dredd.MapErrors.t()
 
   @type t :: %__MODULE__{
           data: any,

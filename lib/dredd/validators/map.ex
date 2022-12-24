@@ -1,9 +1,9 @@
-defmodule Dredd.Validators.Struct do
+defmodule Dredd.Validators.Map do
   @moduledoc false
 
   alias Dredd.{
     Dataset,
-    StructErrors,
+    MapErrors,
   }
 
   def call(%Dataset{valid?: false} = dataset, _validator_map) do
@@ -12,24 +12,24 @@ defmodule Dredd.Validators.Struct do
 
   def call(dataset, validator_map) do
     dataset = Dredd.Dataset.new(dataset)
-    struct_result = Dredd.validate_type(dataset.data, :struct)
+    type_result = Dredd.validate_type(dataset.data, :map)
 
-    if struct_result.valid? do
-      struct_errors = validate(dataset.data, validator_map)
+    if type_result.valid? do
+      map_errors = validate(dataset.data, validator_map)
 
-      if Enum.empty?(struct_errors)do
+      if Enum.empty?(map_errors)do
         dataset
       else 
         %Dataset{
           data: dataset.data,
           valid?: false,
-          error: %StructErrors{
-            errors: struct_errors
+          error: %MapErrors{
+            errors: map_errors
           }
         }
       end
     else
-      struct_result
+      type_result
     end
   end
 

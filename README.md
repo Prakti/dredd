@@ -1,84 +1,152 @@
 # Dredd
+Dredd judges data for you. It's a validator for a wide range of
 
-Dredd judges structs; it's a validator.
+datastructures. 
+Started as a frok of [Justify][2] it's been rewritten to handle plain values
+as well as deeply nested structures and return understandable
+error-structures.
 
-Dredd was forked from [Justify][2]
-
-Inspired heavily by [Ecto.Changeset][1], Dredd allows you to pipe a plain map
-into a series of validation functions using a simple and familiar API. No
+Following in the footsteps of [Ecto.Changeset][1], Dredd allows you to pipe
+values into a series of validation functions using a simple and familiar API. No
 schemas or casting required.
 
 [1]: https://hexdocs.pm/ecto/Ecto.Changeset.html
 [2]: https://github.com/malomohq/justify
 
-### Example
+### A Basic Example
 
 ```elixir
-dataset =
-  %{email: "this_is_not_an_email"}
-  |> Dredd.validate_required(:email)
-  |> Dredd.validate_format(:email, ~r/\S+@\S+/)
-
-dataset.errors #=> [email: [{"has invalid format", validation: :format}]]
-dataset.valid? #=> false
+iex> Dredd.validate_type("this is not an integer", :integer)
+%Dredd.Dataset{
+  data: "this is not an integer",
+  error: %Dredd.SingleError{
+    validator: :type,
+    message: "has invalid type",
+    metadata: %{type: :integer}
+  },
+  valid?: false
+}
 ```
 
-Each validation function will return a `Dredd.Dataset` struct which can be
+As you can see this is a rather verbose output; but we believe that this can
+come in handy in conjunction when you have to translate the error on the
+user interface.
+
+Each validation function will return a `%Dredd.Dataset{}` which can be
 passed into the next function. If a validation error is encountered the dataset
-will be marked as invalid and an error will be added to the struct.
+will be marked as invalid and an error will be added to the struct. Each
+validator behaves in a fail-fast manner. If the Dataset is already invalid
+no further validation happens for any given value. As a tip: you should order your
+validations by descending importance.
 
-## Custom Validations
+Errors are distinguished by type to allow traversal of nested structures by
+matching against the struct type of the encountered error.
 
-You can provide your own custom validations using the `Dredd.add_error/4`
-function.
+When validating single values a `%SingleError{}` is returned whenever it
+fails.
 
-### Example
+## Validating Lists
 
-```elixir
-defmodule MyValidator do
-  def validate_color(data, field, color) do
-    dataset = Dredd.Dataset.new(data)
+To ramp up the complexits: you can validate all elements of a list by handing 
+a validation function to `Dredd.validate_list`. 
 
-    value = Map.get(dataset.data, :field)
+### Simple List Example
 
-    if value == color do
-      dataset
-    else
-      Dredd.add_error(dataset, field, "wrong color", validation: :color)
-    end
-  end
-end
-```
-
-Your custom validation can be used as part of a validation pipeline.
-
-### Example
+This is how you would validate a list of strings. 
 
 ```elixir
-dataset =
-  %{color: "brown"}
-  |> Dredd.validation_required(:color)
-  |> MyValidator.validate_color(:color, "green")
-
-dataset.errors #=> [color: [{"wrong color", validation: :color}]]
-dataset.valid? #=> false
+iex> Dredd.validate_list(["string", -1, "string", 0], &Dredd.validate_type(&1, :string))
+%Dredd.Dataset{
+  data: ["string", -1, "string", 0],
+  error: %Dredd.ListErrors{
+    validator: :list,
+    errors: %{
+      1 => %Dredd.SingleError{
+        validator: :type,
+        message: "has invalid type",
+        metadata: %{type: :string}
+      },
+      3 => %Dredd.SingleError{
+        validator: :type,
+        message: "has invalid type",
+        metadata: %{type: :string}
+      }
+    }
+  },
+  valid?: false
+}
 ```
 
-## Supported Validations
+In case of errors, `validate_list` returns a `%Dredd.Dataset{}` containing a
+`%Dredd.ListError{}` or a `%Dredd.SimpleError{}` which in turn contains a 
+map with `Dredd.SingleError{}` values stored unter their positions in the 
+list. We hope that at this point the typing of the errors and the verbosity
+help to understand at which point in the given datastructure the error 
+actually occurred.
 
-* [`validate_acceptance/3`](https://hexdocs.pm/dredd/Dredd.html#validate_acceptance/3)
-* [`validate_confirmation/3`](https://hexdocs.pm/dredd/Dredd.html#validate_confirmation/3)
-* [`validate_embed/3`](https://hexdocs.pm/dredd/Dredd.html#validate_embed/3)
-* [`validate_exclusion/4`](https://hexdocs.pm/dredd/Dredd.html#validate_exclusion/4)
-* [`validate_format/4`](https://hexdocs.pm/dredd/Dredd.html#validate_format/4)
-* [`validate_inclusion/4`](https://hexdocs.pm/dredd/Dredd.html#validate_inclusion/4)
-* [`validate_length/3`](https://hexdocs.pm/dredd/Dredd.html#validate_length/3)
-* [`validate_required/3`](https://hexdocs.pm/dredd/Dredd.html#validate_required/3)
-* [`validate_type/4`](https://hexdocs.pm/dredd/Dredd.html#validate_type/4)
+### Complex List Example
+
+You can exploit the fact that cou can pipe the output of all validator
+functions into the next one and compose chain together multiple values for
+the elements of your list. 
+
+```elixir
+iex> item_validator = fn data ->
+...>   Dredd.validate_required(data)
+...>   |> Dredd.validate_type(:string)
+...> end
+iex> my_list = ["", -1, "foo"]
+["", -1, "foo"]
+iex> Dredd.validate_list(my_list, item_validator)
+%Dredd.Dataset{
+  data: ["", -1, "foo"],
+  error: %Dredd.ListErrors{
+    validator: :list,
+    errors: %{
+      0 => %Dredd.SingleError{
+        validator: :required,
+        message: "can't be blank",
+        metadata: %{}
+      },
+      1 => %Dredd.SingleError{
+        validator: :type,
+        message: "has invalid type",
+        metadata: %{type: :string}
+      }
+    }
+  },
+  valid?: false
+}
+```
+
+### Handling Non-Lists
+
+In case `Dredd.validate_list` is handed anything but a list, it will return
+a `%Dredd.SingleError{}` indicating that the value is of wrong type:
+
+```elixir
+iex> Dredd.validate_list(100, &Dredd.validate_required(&1))
+%Dredd.Dataset{
+  data: 100,
+  error: %Dredd.SingleError{
+    validator: :type,
+    message: "has invalid type",
+    metadata: %{type: :list}
+  },
+  valid?: false
+}
+```
+
+## Validating Structs
+
+You can validate fields of a struct or map using the
+`Dredd.validate_map/2` function.
+
+### Struct Example
+
+
 
 ## Copyright and License
-
-Copyright (c) 2021 Anthoniy Smith
 
 Copyright (c) 2022 Marcus Autenrieth
 

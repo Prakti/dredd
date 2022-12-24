@@ -3,8 +3,6 @@ defmodule Dredd.Validators.Acceptance do
 
   @default_message "must be accepted"
 
-  def call(dataset, opts \\ [])
-
   def call(%Dredd.Dataset{valid?: false} = dataset, _opts) do
     dataset
   end

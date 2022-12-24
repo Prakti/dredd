@@ -8,7 +8,6 @@ defmodule Dredd.Validators.LengthTest do
   }
 
   describe "validate_length/3 with strings as input" do
-    # TODO: 2020-03-21 Consider positive cases below for string and all count pattern
 
     property "does not add an error if value's length matches `:is` exactly" do
       check all(

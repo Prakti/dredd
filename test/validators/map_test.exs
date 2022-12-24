@@ -1,4 +1,4 @@
-defmodule Dredd.Validators.StructTest do
+defmodule Dredd.Validators.MapTest do
   @moduledoc false
 
   use ExUnit.Case, async: true
@@ -6,11 +6,11 @@ defmodule Dredd.Validators.StructTest do
   alias Dredd.{
    Dataset,
    SingleError,
-   StructErrors,
+   MapErrors,
   }
 
-  describe "validate_struct " do
-    test "returns an error if the value is not 'Access'able" do
+  describe "validate_map/2" do
+    test "returns an error if the value is not a map" do
       value = "foo"
       structure = %{
         field_a: fn (data) -> Dredd.validate_type(data, :string) end,
@@ -23,9 +23,9 @@ defmodule Dredd.Validators.StructTest do
         error: %SingleError{
           validator: :type,
           message: "has invalid type",
-          metadata: %{type: :struct}
+          metadata: %{type: :map}
         }
-      } = Dredd.validate_struct(value, structure)
+      } = Dredd.validate_map(value, structure)
     end
 
     test "returns a StructError if validation of a field failed" do
@@ -41,8 +41,8 @@ defmodule Dredd.Validators.StructTest do
       assert %Dataset{
         data: ^value,
         valid?: false,
-        error: %StructErrors{
-          validator: :struct,
+        error: %MapErrors{
+          validator: :map,
           errors: %{
             field_a: %SingleError{
               validator: :type,
@@ -56,7 +56,7 @@ defmodule Dredd.Validators.StructTest do
             }
           }
         }
-      } = Dredd.validate_struct(value, structure)
+      } = Dredd.validate_map(value, structure)
     end
 
     test "correctly handles valid structs" do
@@ -73,7 +73,26 @@ defmodule Dredd.Validators.StructTest do
         data: ^value,
         valid?: true,
         error: nil
-      } = Dredd.validate_struct(value, structure)
+      } = Dredd.validate_map(value, structure)
+    end
+
+    test "passes through invalid dataset and does not execute validation" do
+      value = %Dataset{
+        data: "not a map!",
+        valid?: false,
+        error: %SingleError{
+          validator: :passthrough,
+          message: "testing passthrough",
+          metadata: %{}
+        }
+      }
+
+      structure = %{
+        field_a: fn (data) -> Dredd.validate_type(data, :string) end,
+        field_b: fn (data) -> Dredd.validate_type(data, :integer) end,
+      }
+
+      assert ^value = Dredd.validate_map(value, structure)
     end
 
   end

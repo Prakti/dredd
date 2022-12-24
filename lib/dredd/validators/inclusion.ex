@@ -3,8 +3,6 @@ defmodule Dredd.Validators.Inclusion do
 
   @default_message "is invalid"
 
-  def call(dataset, enum, opts \\ [])
-
   def call(%Dredd.Dataset{valid?: false} = dataset, _enum, _opts) do
     dataset
   end

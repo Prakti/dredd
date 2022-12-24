@@ -65,7 +65,7 @@ defmodule Dredd.Validators.ListTest do
                error: %SingleError{
                  validator: :type,
                  message: "has invalid type",
-                 metadata: %{ type: :enumerable }
+                 metadata: %{type: :list}
                }
              } = Dredd.validate_list(data, validator)
     end
