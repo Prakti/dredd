@@ -7,7 +7,7 @@ defmodule Dredd.Validators.Number do
     :float,
     :integer,
     :non_neg_integer,
-    :pos_integer,
+    :pos_integer
   ]
 
   @default_message "is not a number"

@@ -5,7 +5,7 @@ defmodule Dredd.Validators.NanoID do
 
   @default_message %{
     type: "is not a valid NanoID",
-    length: "expected nanoID length %{count}",
+    length: "expected nanoID length %{count}"
   }
   @default_length 21
 
@@ -23,7 +23,7 @@ defmodule Dredd.Validators.NanoID do
     if is_nanoid?(value) do
       if String.length(value) == length do
         dataset
-      else 
+      else
         message = Keyword.get(opts, :message, @default_message.length)
 
         Dredd.set_single_error(dataset, message, :nanoid)

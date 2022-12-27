@@ -47,13 +47,13 @@ defmodule Dredd.Validators.ListTest do
       end
 
       check all(data <- list_of(term())) do
-        expected_errors =  
+        expected_errors =
           data
           |> Enum.with_index()
-          |> Enum.reduce(%{}, fn {item, index}, errors -> 
+          |> Enum.reduce(%{}, fn {item, index}, errors ->
             if String.valid?(item) do
               errors
-            else 
+            else
               Map.put(errors, index, %SingleError{
                 validator: :string,
                 message: "is not a string",
@@ -64,10 +64,10 @@ defmodule Dredd.Validators.ListTest do
 
         if Enum.empty?(expected_errors) do
           assert %Dataset{
-            data: ^data,
-            valid?: true,
-            error: nil
-          } = Dredd.validate_list(data, validator)
+                   data: ^data,
+                   valid?: true,
+                   error: nil
+                 } = Dredd.validate_list(data, validator)
         else
           assert %Dataset{
                    data: ^data,
@@ -87,11 +87,11 @@ defmodule Dredd.Validators.ListTest do
       end
 
       check all(data <- list_of(string(:printable, min_length: 1))) do
-          assert %Dataset{
-            data: ^data,
-            valid?: true,
-            error: nil
-          } = Dredd.validate_list(data, validator)
+        assert %Dataset{
+                 data: ^data,
+                 valid?: true,
+                 error: nil
+               } = Dredd.validate_list(data, validator)
       end
     end
 
@@ -119,7 +119,7 @@ defmodule Dredd.Validators.ListTest do
                    message: "should have %{count} item(s)",
                    metadata: %{
                      count: ^count,
-                     kind: :is,
+                     kind: :is
                    }
                  }
                } = result
@@ -143,7 +143,7 @@ defmodule Dredd.Validators.ListTest do
                    message: "should have at least %{count} item(s)",
                    metadata: %{
                      count: ^count,
-                     kind: :min,
+                     kind: :min
                    }
                  }
                } = result
@@ -171,7 +171,7 @@ defmodule Dredd.Validators.ListTest do
                    message: "should have at most %{count} item(s)",
                    metadata: %{
                      count: ^count,
-                     kind: :max,
+                     kind: :max
                    }
                  }
                } = result
@@ -223,7 +223,7 @@ defmodule Dredd.Validators.ListTest do
                } = Dredd.validate_list(value, &Dataset.new/1, max: count)
       end
     end
-    
+
     test "sets a SingleError if given value is not a list" do
       data = 100
 

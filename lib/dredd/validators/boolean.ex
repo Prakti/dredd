@@ -38,6 +38,7 @@ defmodule Dredd.Validators.Boolean do
       dataset
     else
       message = Keyword.get(opts, :wrong_value_message, @default_messages.wrong_value)
+
       Dredd.set_single_error(dataset, message, :boolean, %{
         expected: expected_value,
         kind: :value

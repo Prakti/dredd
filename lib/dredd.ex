@@ -227,19 +227,6 @@ defmodule Dredd do
     as: :call
 
   @doc """
-  Validates that the given value is neither null nor the empty string. 
-
-  ## Optiions
-
-  * `:trim?` - trim whitespaces if value is a string
-  * `:message` - error message, defaults to "can't be blank"
-  """
-  @spec validate_required(any, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_required(dataset, opts \\ []),
-    to: Dredd.Validators.Required,
-    as: :call
-
-  @doc """
   Validates that the value of a field is a number.
 
   Supported types:

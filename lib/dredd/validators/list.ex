@@ -29,6 +29,7 @@ defmodule Dredd.Validators.List do
       case validate_length(value, opts) do
         :ok ->
           validate_elements(dataset, validator)
+
         {message, metadata} ->
           Dredd.set_single_error(dataset, message, :list, metadata)
       end

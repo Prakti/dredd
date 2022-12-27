@@ -8,7 +8,6 @@ defmodule Validators.TypeTest do
   }
 
   describe "validate_number/3" do
-
     test "adds an error if value does not match type :float" do
       data = "value"
 
@@ -106,8 +105,6 @@ defmodule Validators.TypeTest do
                valid?: false
              } = Dredd.validate_number(data, :pos_integer)
     end
-
-
 
     test "raises an ArgumentError if type is not recognized" do
       data = "value"
