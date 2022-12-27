@@ -3,7 +3,10 @@ defmodule Dredd.Validators.NanoID do
 
   @nanoid_regex ~r/^[\w-]+$/
 
-  @default_message "is not a valid NanoID"
+  @default_message %{
+    type: "is not a valid NanoID",
+    length: "expected nanoID length %{count}",
+  }
   @default_length 21
 
   def call(%Dredd.Dataset{valid?: false} = dataset, _opts) do
@@ -15,12 +18,19 @@ defmodule Dredd.Validators.NanoID do
 
     value = dataset.data
 
-    message = Keyword.get(opts, :message, @default_message)
     length = Keyword.get(opts, :length, @default_length)
 
     if is_nanoid?(value) do
-      Dredd.validate_length(value, is: length, count: :bytes)
+      if String.length(value) == length do
+        dataset
+      else 
+        message = Keyword.get(opts, :message, @default_message.length)
+
+        Dredd.set_single_error(dataset, message, :nanoid)
+      end
     else
+      message = Keyword.get(opts, :message, @default_message.type)
+
       Dredd.set_single_error(dataset, message, :nanoid)
     end
   end

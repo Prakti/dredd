@@ -6,6 +6,9 @@ defmodule Dredd.Validators.NanoIDTest do
     Dataset,
     SingleError
   }
+  
+  # TODO: 2022-12-27 - Add test for length check
+  # TODO: 2022-12-27 - Add tests for message overrides
 
   def nanoid_gen(len) do
     string([?a..?z, ?A..?Z, ?0..?9, ?_, ?-], length: len)
