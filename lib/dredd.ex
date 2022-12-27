@@ -127,20 +127,21 @@ defmodule Dredd do
   the length of the binary either .
 
   ## Options
-  * `:is` - exact required length of a string
-  * `:min` - minimal required length of a string
+  * `:is` - exact required length of a binary
+  * `:min` - minimal required length of a binary
     (should not be used together with `is`)
-  * `:max` - maximal allowed length of a string
+  * `:max` - maximal allowed length of a binary
     (should not be used together with `is`)
   * `:type_message` - error message in case the type is wrong;
-    defaults to "is not a string"
+    defaults to "is not a binary"
   * `:is_message` - error message in case the exact length is wrong
-     defaults to "should be %{count} character(s)"
+     defaults to "should be %{count} bytes(s)"
   * `:min_message` - error message in case the length is too short
-    defaults to "should be at least %{count} character(s)"
+    defaults to "should be at least %{count} bytes(s)"
   * `:max_message` - error message in case the length is too long
-    defaults to "should be at "should be at most %{count} character(s)"
+    defaults to "should be at "should be at most %{count} bytes(s)"
   """
+  @spec validate_binary(any, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_binary(dataset, opts \\ []),
     to: Dredd.Validators.Binary,
     as: :call
@@ -150,10 +151,23 @@ defmodule Dredd do
   @doc """
     Applies a validator function to a each element of a list contained in a field.
 
-  ## TODO: 2022-11-20 - Write Example
+  ## Options
+  * `:is` - exact required length of a list
+  * `:min` - minimal required length of a list 
+    (should not be used together with `is`)
+  * `:max` - maximal allowed length of a list
+    (should not be used together with `is`)
+  * `:type_message` - error message in case the type is wrong;
+    defaults to "is not a list"
+  * `:is_message` - error message in case the exact length is wrong
+     defaults to "should be %{count} item(s)"
+  * `:min_message` - error message in case the length is too short
+    defaults to "should be at least %{count} item(s)"
+  * `:max_message` - error message in case the length is too long
+    defaults to "should be at "should be at most %{count} item(s)"
   """
-  @spec validate_list(any(), single_validator_fun()) :: Dredd.Dataset.t()
-  defdelegate validate_list(dataset, validator),
+  @spec validate_list(any(), single_validator_fun(), Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_list(dataset, validator, opts \\ []),
     to: Dredd.Validators.List,
     as: :call
 
@@ -166,10 +180,14 @@ defmodule Dredd do
     that supports the Access behaviour and whose structure can be represented
     by a map.
 
+  ## Options
+  * `message` - error message in case the type-check fails
+     defaults to: "is not a map"
+
   ## TODO: 2022-12-22 - Write Example
   """
-  @spec validate_map(any(), validator_map()) :: Dredd.Dataset.t()
-  defdelegate validate_map(dataset, validator_map),
+  @spec validate_map(any(), validator_map(), Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_map(dataset, validator_map, opts \\ []),
     to: Dredd.Validators.Map,
     as: :call
 
@@ -209,35 +227,6 @@ defmodule Dredd do
   @spec validate_inclusion(any, Enum.t(), Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_inclusion(dataset, enum, opts \\ []),
     to: Dredd.Validators.Inclusion,
-    as: :call
-
-  @doc """
-  Validates the length of a string or list.
-
-  ## Options
-
-  * `:count` - how to calculate the length of a string. Must be one of
-    `:codepoints`, `:graphemes` or `:bytes`. Defaults to `:graphemes`.
-  * `:is` - the exact length match
-  * `:min` - match a length greater than or equal to
-  * `:max` - match a length less than or equal to
-  * `:message` - error message, defaults to one of the following variants:
-    * for strings
-      * “should be %{count} character(s)”
-      * “should be at least %{count} character(s)”
-      * “should be at most %{count} character(s)”
-    * for binary
-      * “should be %{count} byte(s)”
-      * “should be at least %{count} byte(s)”
-      * “should be at most %{count} byte(s)”
-    * for lists
-      * “should have %{count} item(s)”
-      * “should have at least %{count} item(s)”
-      * “should have at most %{count} item(s)”
-  """
-  @spec validate_length(any, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_length(dataset, opts),
-    to: Dredd.Validators.Length,
     as: :call
 
   @doc """

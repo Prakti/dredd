@@ -72,7 +72,7 @@ defmodule Dredd.Validators.String do
   end
 
   defp check_length(len, %{max: count} = opts) when len > count do
-    message = Map.get(opts, :message, @default_message.max)
+    message = Map.get(opts, :max_message, @default_message.max)
 
     {message, %{count: count, kind: :max}}
   end

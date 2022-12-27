@@ -7,6 +7,8 @@ defmodule Dredd.Validators.StringTest do
     SingleError
   }
 
+  # TODO: 2022-12-27 - Test error-message overrides
+
   describe "validate_string/2" do
     property "does not add an error if given value is a string" do
       check all(data <- string(:printable)) do

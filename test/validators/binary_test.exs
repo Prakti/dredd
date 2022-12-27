@@ -7,6 +7,8 @@ defmodule Dredd.Validators.BinaryTest do
     SingleError
   }
 
+  # TODO: 2022-12-27 - Test error-message overrides
+
   describe "validate_binary/2" do
     test "adds an error if value is not a binary" do
       data = nil

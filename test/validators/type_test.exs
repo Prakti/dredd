@@ -8,6 +8,7 @@ defmodule Validators.TypeTest do
   }
 
   describe "validate_type/2" do
+
     test "adds an error if value does not match type :float" do
       data = "value"
 
@@ -106,47 +107,7 @@ defmodule Validators.TypeTest do
              } = Dredd.validate_type(data, :pos_integer)
     end
 
-    test "adds an error if value does not match type :string" do
-      data = 0
 
-      assert %Dataset{
-               data: ^data,
-               error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :string}
-               },
-               valid?: false
-             } = Dredd.validate_type(data, :string)
-    end
-
-    test "adds an error if value does not match type :list" do
-      data = 0
-
-      assert %Dataset{
-               data: ^data,
-               error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :list}
-               },
-               valid?: false
-             } = Dredd.validate_type(data, :list)
-    end
-
-    test "adds an error if value does not match type :map" do
-      data = "wrooong"
-
-      assert %Dataset{
-               data: ^data,
-               valid?: false,
-               error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :map}
-               }
-             } = Dredd.validate_type(data, :map)
-    end
 
     test "raises an ArgumentError if type is not recognized" do
       data = "value"
@@ -192,36 +153,6 @@ defmodule Validators.TypeTest do
                error: nil,
                valid?: true
              } = Dredd.validate_type(data, :pos_integer)
-    end
-
-    test "does not add an error if value matches type :string" do
-      data = "value"
-
-      assert %Dataset{
-               data: ^data,
-               error: nil,
-               valid?: true
-             } = Dredd.validate_type(data, :string)
-    end
-
-    test "does not add an error if value matches type :list" do
-      data = [1, 2, 3]
-
-      assert %Dataset{
-               data: ^data,
-               error: nil,
-               valid?: true
-             } = Dredd.validate_type(data, :list)
-    end
-
-    test "does not add an error if value matches type :map" do
-      data = %{foo: "bar", bang: 10}
-
-      assert %Dataset{
-               data: ^data,
-               error: nil,
-               valid?: true
-             } = Dredd.validate_type(data, :map)
     end
 
     test "uses a custom error message when provided" do

@@ -6,15 +6,17 @@ defmodule Dredd.Validators.Map do
     MapErrors
   }
 
-  def call(%Dataset{valid?: false} = dataset, _validator_map) do
+  @default_message "is not a map"
+
+  def call(%Dataset{valid?: false} = dataset, _validator_map, _opts) do
     dataset
   end
 
-  def call(dataset, validator_map) do
+  def call(dataset, validator_map, opts) do
     dataset = Dredd.Dataset.new(dataset)
-    type_result = Dredd.validate_type(dataset.data, :map)
+    data = dataset.data
 
-    if type_result.valid? do
+    if is_map(data) do
       data = dataset.data
 
       {_, error_map} = Enum.reduce(validator_map, {data, %{}}, &validate_field/2)
@@ -31,7 +33,9 @@ defmodule Dredd.Validators.Map do
         }
       end
     else
-      type_result
+      message = Keyword.get(opts, :type_message, @default_message)
+
+      Dredd.set_single_error(dataset, message, :map, %{kind: :type})
     end
   end
 

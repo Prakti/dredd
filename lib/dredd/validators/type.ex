@@ -8,7 +8,6 @@ defmodule Dredd.Validators.Type do
     :integer,
     :non_neg_integer,
     :pos_integer,
-    :list,
     :map
   ]
 
@@ -50,14 +49,6 @@ defmodule Dredd.Validators.Type do
 
   defp check(:pos_integer, value) do
     is_integer(value) && value > 0
-  end
-
-  defp check(:map, value) do
-    is_map(value)
-  end
-
-  defp check(:list, value) do
-    is_list(value)
   end
 
   defp check(type, _value) do

@@ -22,9 +22,9 @@ defmodule Dredd.Validators.MapTest do
                data: ^value,
                valid?: false,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :map}
+                 validator: :map,
+                 message: "is not a map",
+                 metadata: %{kind: :type}
                }
              } = Dredd.validate_map(value, structure)
     end
@@ -36,7 +36,7 @@ defmodule Dredd.Validators.MapTest do
       }
 
       structure = %{
-        field_a: fn data -> Dredd.validate_type(data, :string) end,
+        field_a: fn data -> Dredd.validate_string(data) end,
         field_b: fn data -> Dredd.validate_type(data, :integer) end
       }
 
@@ -47,9 +47,9 @@ defmodule Dredd.Validators.MapTest do
                  validator: :map,
                  errors: %{
                    field_a: %SingleError{
-                     validator: :type,
-                     message: "has invalid type",
-                     metadata: %{type: :string}
+                     validator: :string,
+                     message: "is not a string",
+                     metadata: %{kind: :type}
                    },
                    field_b: %SingleError{
                      validator: :type,
@@ -68,7 +68,7 @@ defmodule Dredd.Validators.MapTest do
       }
 
       structure = %{
-        field_a: fn data -> Dredd.validate_type(data, :string) end,
+        field_a: fn data -> Dredd.validate_string(data) end,
         field_b: fn data -> Dredd.validate_type(data, :integer) end
       }
 
