@@ -8,7 +8,6 @@ defmodule Validators.TypeTest do
   }
 
   describe "validate_type/2" do
-
     test "adds an error if value does not match type :float" do
       data = "value"
 

@@ -67,6 +67,60 @@ defmodule Dredd do
     to: Dredd.Validators.Boolean,
     as: :call
 
+  @doc """
+  Validates the given values is of type string. Optionally also validates
+  the length of the string either as codepoints of graphemes.
+
+  ## Options
+  * `:is` - exact required length of a string
+  * `:min` - minimal required length of a string
+    (should not be used together with `is`)
+  * `:max` - maximal allowed length of a string
+    (should not be used together with `is`)
+  * `:type_message` - error message in case the type is wrong; 
+    defaults to "is not a string"
+  * `:is_message` - error message in case the exact length is wrong
+     defaults to "should be %{count} character(s)"
+  * `:min_message` - error message in case the length is too short 
+    defaults to "should be at least %{count} character(s)"
+  * `:max_message` - error message in case the length is too long
+    defaults to "should be at "should be at most %{count} character(s)"
+
+  ## Examples
+  Here's a simple data with invalid data:
+  ```elixir
+  iex> Dredd.validate_string(10)
+  %Dredd.Dataset{
+    data: 10,
+    error: %Dredd.SingleError{
+      validator: :string,
+      message: "is not a string",
+      metadata: %{kind: :type}
+    },
+    valid?: false
+  }
+  ```
+
+  Here's an example with a string that is too short but has a length
+  requirement:
+  ```elixir
+  iex> Dredd.validate_string("", min: 5)
+  %Dredd.Dataset{
+    data: "",
+    error: %Dredd.SingleError{
+      validator: :string,
+      message: "should be at least %{count} character(s)",
+      metadata: %{count: 5, kind: :min}
+    },
+    valid?: false
+  }
+  ```
+  """
+  @spec validate_string(any, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_string(dataset, opts \\ []),
+    to: Dredd.Validators.String,
+    as: :call
+
   @type single_validator_fun :: (any() -> Dredd.Dataset.t())
 
   @doc """

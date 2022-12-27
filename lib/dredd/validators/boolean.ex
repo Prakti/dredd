@@ -1,6 +1,8 @@
 defmodule Dredd.Validators.Boolean do
   @moduledoc false
 
+  # TODO: 2022-12-27 - Put `kind` hint in metadata for type and value check
+
   @default_messages %{
     wrong_type: "is not a boolean",
     wrong_value: "expected value: %{expected}"
