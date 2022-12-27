@@ -32,7 +32,7 @@ defmodule Dredd do
     error: %Dredd.SingleError{
       validator: :boolean,
       message: "is not a boolean",
-      metadata: %{}
+      metadata: %{kind: :type}
     },
     valid?: false
   }
@@ -52,7 +52,7 @@ defmodule Dredd do
     error: %Dredd.SingleError{
       validator: :boolean,
       message: "expected value: %{expected}",
-      metadata: %{expected: true}
+      metadata: %{expected: true, kind: :value}
     },
     valid?: false
   }

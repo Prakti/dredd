@@ -27,7 +27,7 @@ defmodule Dredd.Validators.BooleanTest do
                    error: %SingleError{
                      validator: :boolean,
                      message: "is not a boolean",
-                     metadata: %{}
+                     metadata: %{kind: :type}
                    },
                    valid?: false
                  } = Dredd.validate_boolean(dataset)
@@ -55,7 +55,7 @@ defmodule Dredd.Validators.BooleanTest do
                    error: %SingleError{
                      validator: :boolean,
                      message: "expected value: %{expected}",
-                     metadata: %{expected: ^expected}
+                     metadata: %{expected: ^expected, kind: :value}
                    },
                    valid?: false
                  } = Dredd.validate_boolean(dataset, is: expected)
@@ -86,7 +86,7 @@ defmodule Dredd.Validators.BooleanTest do
                error: %SingleError{
                  validator: :boolean,
                  message: ^message,
-                 metadata: %{}
+                 metadata: %{kind: :type}
                },
                valid?: false
              } = Dredd.validate_boolean(data, wrong_type_message: message)
@@ -102,7 +102,7 @@ defmodule Dredd.Validators.BooleanTest do
                error: %SingleError{
                  validator: :boolean,
                  message: ^message,
-                 metadata: %{expected: ^expected}
+                 metadata: %{expected: ^expected, kind: :value}
                },
                valid?: false
              } = Dredd.validate_boolean(data, is: expected, wrong_value_message: message)

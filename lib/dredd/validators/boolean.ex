@@ -1,8 +1,6 @@
 defmodule Dredd.Validators.Boolean do
   @moduledoc false
 
-  # TODO: 2022-12-27 - Put `kind` hint in metadata for type and value check
-
   @default_messages %{
     wrong_type: "is not a boolean",
     wrong_value: "expected value: %{expected}"
@@ -29,7 +27,7 @@ defmodule Dredd.Validators.Boolean do
       dataset
     else
       message = Keyword.get(opts, :wrong_type_message, @default_messages.wrong_type)
-      Dredd.set_single_error(dataset, message, :boolean, %{})
+      Dredd.set_single_error(dataset, message, :boolean, %{kind: :type})
     end
   end
 
@@ -40,7 +38,10 @@ defmodule Dredd.Validators.Boolean do
       dataset
     else
       message = Keyword.get(opts, :wrong_value_message, @default_messages.wrong_value)
-      Dredd.set_single_error(dataset, message, :boolean, %{expected: expected_value})
+      Dredd.set_single_error(dataset, message, :boolean, %{
+        expected: expected_value,
+        kind: :value
+      })
     end
   end
 end
