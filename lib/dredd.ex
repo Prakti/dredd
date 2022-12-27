@@ -9,8 +9,7 @@ defmodule Dredd do
   """
 
   @type type_t ::
-          :boolean
-          | :float
+          :float
           | :integer
           | :non_neg_integer
           | :pos_integer
@@ -20,15 +19,52 @@ defmodule Dredd do
           | :map
 
   @doc """
-  Validates the given field has a value of `true`.
+  Validates the given values is of type boolean. Optionally also validates
+  against a specific boolean value.
 
   ## Options
+  * `:is` - the expected value (`true`|`false`)
+  * `:wrong_type_message` - error message, defaults to "is not a boolean"
+  * `:wrong_value_message` - error message, defaults to "expected value: %{expected}"
 
-  * `:message` - error message, defaults to "must be accepted"
+  ## Examples
+  Simple case with data of invalid type:
+  ```elixir
+  iex> Dredd.validate_boolean('foo')
+  %Dredd.Dataset{
+    data: 'foo',
+    error: %Dredd.SingleError{
+      validator: :boolean,
+      message: "is not a boolean",
+      metadata: %{}
+    },
+    valid?: false
+  }
+  ```
+
+  Simple case with valid boolean type:
+  ```elixir
+  iex> Dredd.validate_boolean(true)
+  %Dredd.Dataset{data: true, error: nil, valid?: true}
+  ```
+
+  Special invalid case with optional expected value:
+  ```elixir
+  iex> Dredd.validate_boolean(false, is: true)
+  %Dredd.Dataset{
+    data: false,
+    error: %Dredd.SingleError{
+      validator: :boolean,
+      message: "expected value: %{expected}",
+      metadata: %{expected: true}
+    },
+    valid?: false
+  }
+  ```
   """
-  @spec validate_acceptance(any, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_acceptance(dataset, opts \\ []),
-    to: Dredd.Validators.Acceptance,
+  @spec validate_boolean(any, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_boolean(dataset, opts \\ []),
+    to: Dredd.Validators.Boolean,
     as: :call
 
   @type single_validator_fun :: (any() -> Dredd.Dataset.t())

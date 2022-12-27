@@ -4,7 +4,6 @@ defmodule Dredd.Validators.Type do
   # TODO: 2022-12-27 - Break out into one validator per type
 
   @available_types [
-    :boolean,
     :float,
     :integer,
     :non_neg_integer,
@@ -36,10 +35,6 @@ defmodule Dredd.Validators.Type do
 
       Dredd.set_single_error(dataset, message, :type, %{type: type})
     end
-  end
-
-  defp check(:boolean, value) do
-    is_boolean(value)
   end
 
   defp check(:float, value) do

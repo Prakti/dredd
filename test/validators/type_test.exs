@@ -8,19 +8,6 @@ defmodule Validators.TypeTest do
   }
 
   describe "validate_type/2" do
-    test "adds an error if value does not match type :boolean" do
-      data = "value"
-
-      assert %Dataset{
-               data: ^data,
-               error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :boolean}
-               },
-               valid?: false
-             } = Dredd.validate_type(data, :boolean)
-    end
 
     test "adds an error if value does not match type :float" do
       data = "value"
@@ -168,16 +155,6 @@ defmodule Validators.TypeTest do
       assert_raise ArgumentError, fn -> Dredd.validate_type(data, :nope) end
     end
 
-    test "does not add an error if value matches type :boolean" do
-      data = true
-
-      assert %Dataset{
-               data: ^data,
-               error: nil,
-               valid?: true
-             } = Dredd.validate_type(data, :boolean)
-    end
-
     test "does not add an error if value matches type :float" do
       data = 1.0
 
@@ -258,10 +235,10 @@ defmodule Validators.TypeTest do
                error: %SingleError{
                  validator: :type,
                  message: ^message,
-                 metadata: %{type: :boolean}
+                 metadata: %{type: :integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :boolean, message: message)
+             } = Dredd.validate_type(data, :integer, message: message)
     end
 
     test "passes through invalid datasets and does not execute validation" do
@@ -283,7 +260,7 @@ defmodule Validators.TypeTest do
                  metadata: %{}
                },
                valid?: false
-             } = Dredd.validate_type(data, :boolean)
+             } = Dredd.validate_type(data, :integer)
     end
 
     test "adds an error if value is `nil`" do
@@ -294,10 +271,10 @@ defmodule Validators.TypeTest do
                error: %SingleError{
                  validator: :type,
                  message: "has invalid type",
-                 metadata: %{type: :boolean}
+                 metadata: %{type: :integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :boolean)
+             } = Dredd.validate_type(data, :integer)
     end
   end
 end
