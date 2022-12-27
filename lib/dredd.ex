@@ -13,7 +13,6 @@ defmodule Dredd do
           | :integer
           | :non_neg_integer
           | :pos_integer
-          | :string
           | :list
           | :struct
           | :map
@@ -77,6 +76,8 @@ defmodule Dredd do
     (should not be used together with `is`)
   * `:max` - maximal allowed length of a string
     (should not be used together with `is`)
+  * `:count` - can be `:codepoints` or `:graphemes`.
+     Defaults to `:graphemes`
   * `:type_message` - error message in case the type is wrong; 
     defaults to "is not a string"
   * `:is_message` - error message in case the exact length is wrong
@@ -119,6 +120,29 @@ defmodule Dredd do
   @spec validate_string(any, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_string(dataset, opts \\ []),
     to: Dredd.Validators.String,
+    as: :call
+
+  @doc """
+  Validates the given values binaries. Optionally also validates
+  the length of the binary either .
+
+  ## Options
+  * `:is` - exact required length of a string
+  * `:min` - minimal required length of a string
+    (should not be used together with `is`)
+  * `:max` - maximal allowed length of a string
+    (should not be used together with `is`)
+  * `:type_message` - error message in case the type is wrong;
+    defaults to "is not a string"
+  * `:is_message` - error message in case the exact length is wrong
+     defaults to "should be %{count} character(s)"
+  * `:min_message` - error message in case the length is too short
+    defaults to "should be at least %{count} character(s)"
+  * `:max_message` - error message in case the length is too long
+    defaults to "should be at "should be at most %{count} character(s)"
+  """
+  defdelegate validate_binary(dataset, opts \\ []),
+    to: Dredd.Validators.Binary,
     as: :call
 
   @type single_validator_fun :: (any() -> Dredd.Dataset.t())

@@ -240,5 +240,6 @@ defmodule Dredd.Validators.StringTest do
 
       assert dataset == Dredd.validate_string(dataset, max: 10)
     end
+
   end
 end
