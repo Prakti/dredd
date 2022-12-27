@@ -7,7 +7,6 @@ defmodule Dredd.Validators.NanoIDTest do
     SingleError
   }
 
-  # TODO: 2022-12-27 - Add test for length check
   # TODO: 2022-12-27 - Add tests for message overrides
 
   def nanoid_gen(len) do
@@ -47,7 +46,39 @@ defmodule Dredd.Validators.NanoIDTest do
       end
     end
 
-    test "does and early abort if given dataset is already invalid" do
+    property "does add an error if NanoID is shorter than required" do
+      check all(nanoid <- nanoid_gen(21)) do
+        length = String.length(nanoid) + 5
+
+        assert %Dataset{
+                 data: ^nanoid,
+                 valid?: false,
+                 error: %SingleError{
+                   validator: :nanoid,
+                   message: "expected NanoID length is %{count}",
+                   metadata: %{kind: :length, count: ^length}
+                 }
+               } = Dredd.validate_nanoid(nanoid, length: length)
+      end
+    end
+
+    property "does add an error if NanoID is longer than required" do
+      check all(nanoid <- nanoid_gen(21)) do
+        length = String.length(nanoid) - 5
+
+        assert %Dataset{
+                 data: ^nanoid,
+                 valid?: false,
+                 error: %SingleError{
+                   validator: :nanoid,
+                   message: "expected NanoID length is %{count}",
+                   metadata: %{kind: :length, count: ^length}
+                 }
+               } = Dredd.validate_nanoid(nanoid, length: length)
+      end
+    end
+
+    test "does an early abort if given dataset is already invalid" do
       data = %Dataset{
         data: nil,
         valid?: false,
@@ -67,6 +98,35 @@ defmodule Dredd.Validators.NanoIDTest do
                  metadata: %{}
                }
              } = Dredd.validate_nanoid(data)
+    end
+
+    test "allows setting a `type_message`" do
+      message = "type message"
+
+      assert %Dataset{
+               data: nil,
+               valid?: false,
+               error: %SingleError{
+                 validator: :nanoid,
+                 message: ^message,
+                 metadata: %{}
+               }
+             } = Dredd.validate_nanoid(nil, type_message: message)
+    end
+
+    test "allows setting a `length_message`" do
+      data = "ABC123"
+      message = "length message"
+
+      assert %Dataset{
+               data: ^data,
+               valid?: false,
+               error: %SingleError{
+                 validator: :nanoid,
+                 message: ^message,
+                 metadata: %{kind: :length, count: 21}
+               }
+             } = Dredd.validate_nanoid(data, length_message: message)
     end
 
     test "adds an error if given value is `nil`" do
