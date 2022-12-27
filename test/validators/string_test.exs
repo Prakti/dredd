@@ -7,8 +7,6 @@ defmodule Dredd.Validators.StringTest do
     SingleError
   }
 
-  # TODO: 2022-12-27 - Test error-message overrides
-
   describe "validate_string/2" do
     property "does not add an error if given value is a string" do
       check all(data <- string(:printable)) do
@@ -56,7 +54,7 @@ defmodule Dredd.Validators.StringTest do
       end
     end
 
-    property "does not add an error if value's length matches `:is` exactly" do
+    property "does not add an error if value's length matches `:exact_length`" do
       check all(
               value <- string(:printable, min_length: 1),
               count <- member_of([:graphemes, :codepoints])
@@ -74,7 +72,7 @@ defmodule Dredd.Validators.StringTest do
                  data: ^value,
                  error: nil,
                  valid?: true
-               } = Dredd.validate_string(value, is: correct_length, count: count)
+               } = Dredd.validate_string(value, exact_length: correct_length, count: count)
       end
     end
 
@@ -96,7 +94,7 @@ defmodule Dredd.Validators.StringTest do
                  data: ^value,
                  error: nil,
                  valid?: true
-               } = Dredd.validate_string(value, min: min_length, count: count)
+               } = Dredd.validate_string(value, min_length: min_length, count: count)
       end
     end
 
@@ -118,7 +116,7 @@ defmodule Dredd.Validators.StringTest do
                  data: ^value,
                  error: nil,
                  valid?: true
-               } = Dredd.validate_string(value, max: max_length, count: count)
+               } = Dredd.validate_string(value, max_lenth: max_length, count: count)
       end
     end
 
@@ -149,7 +147,7 @@ defmodule Dredd.Validators.StringTest do
           message: "should be %{count} character(s)",
           metadata: %{
             count: wrong_length,
-            kind: :is
+            kind: :exact_length
           }
         }
 
@@ -157,7 +155,7 @@ defmodule Dredd.Validators.StringTest do
                  data: ^value,
                  error: ^expected_error,
                  valid?: false
-               } = Dredd.validate_string(value, count: count, is: wrong_length)
+               } = Dredd.validate_string(value, count: count, exact_length: wrong_length)
       end
     end
 
@@ -186,10 +184,10 @@ defmodule Dredd.Validators.StringTest do
                    message: "should be at least %{count} character(s)",
                    metadata: %{
                      count: ^wrong_length,
-                     kind: :min
+                     kind: :min_length
                    }
                  }
-               } = Dredd.validate_string(value, min: wrong_length, count: count)
+               } = Dredd.validate_string(value, min_length: wrong_length, count: count)
       end
     end
 
@@ -222,10 +220,10 @@ defmodule Dredd.Validators.StringTest do
                    message: "should be at most %{count} character(s)",
                    metadata: %{
                      count: ^wrong_length,
-                     kind: :max
+                     kind: :max_length
                    }
                  }
-               } = Dredd.validate_string(value, max: wrong_length, count: count)
+               } = Dredd.validate_string(value, max_length: wrong_length, count: count)
       end
     end
 
@@ -241,6 +239,66 @@ defmodule Dredd.Validators.StringTest do
       }
 
       assert dataset == Dredd.validate_string(dataset, max: 10)
+    end
+
+    test "allows setting `type_message`" do
+      data = nil
+      message = "type message"
+
+      assert %Dataset{
+               data: ^data,
+               error: %SingleError{
+                 validator: :string,
+                 message: ^message,
+                 metadata: %{kind: :type}
+               },
+               valid?: false
+             } = Dredd.validate_string(data, type_message: message)
+    end
+
+    test "allows setting `exact_length_message`" do
+      data = "foo"
+      message = "exact length message"
+
+      assert %Dataset{
+               data: ^data,
+               error: %SingleError{
+                 validator: :string,
+                 message: ^message,
+                 metadata: %{kind: :exact_length, count: 10}
+               },
+               valid?: false
+             } = Dredd.validate_string(data, exact_length: 10, exact_length_message: message)
+    end
+
+    test "allows setting `min_length_message`" do
+      data = "foo"
+      message = "min length message"
+
+      assert %Dataset{
+               data: ^data,
+               error: %SingleError{
+                 validator: :string,
+                 message: ^message,
+                 metadata: %{kind: :min_length, count: 10}
+               },
+               valid?: false
+             } = Dredd.validate_string(data, min_length: 10, min_length_message: message)
+    end
+
+    test "allows setting `max_length_message`" do
+      data = "This is way too long, Dude!"
+      message = "max length message"
+
+      assert %Dataset{
+               data: ^data,
+               error: %SingleError{
+                 validator: :string,
+                 message: ^message,
+                 metadata: %{kind: :max_length, count: 10}
+               },
+               valid?: false
+             } = Dredd.validate_string(data, max_length: 10, max_length_message: message)
     end
   end
 end

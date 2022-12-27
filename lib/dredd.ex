@@ -102,13 +102,13 @@ defmodule Dredd do
   Here's an example with a string that is too short but has a length
   requirement:
   ```elixir
-  iex> Dredd.validate_string("", min: 5)
+  iex> Dredd.validate_string("", min_length: 5)
   %Dredd.Dataset{
     data: "",
     error: %Dredd.SingleError{
       validator: :string,
       message: "should be at least %{count} character(s)",
-      metadata: %{count: 5, kind: :min}
+      metadata: %{count: 5, kind: :min_length}
     },
     valid?: false
   }
