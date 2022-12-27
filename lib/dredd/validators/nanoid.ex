@@ -18,7 +18,7 @@ defmodule Dredd.Validators.NanoID do
     message = Keyword.get(opts, :message, @default_message)
     length = Keyword.get(opts, :length, @default_length)
 
-    if value == nil || is_nanoid?(value) do
+    if is_nanoid?(value) do
       Dredd.validate_length(value, is: length, count: :bytes)
     else
       Dredd.set_single_error(dataset, message, :nanoid)

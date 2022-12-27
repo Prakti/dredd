@@ -8,7 +8,6 @@ defmodule Dredd.Validators.LengthTest do
   }
 
   describe "validate_length/3 with strings as input" do
-
     property "does not add an error if value's length matches `:is` exactly" do
       check all(
               value <- string(:printable, min_length: 1),
@@ -474,39 +473,41 @@ defmodule Dredd.Validators.LengthTest do
   end
 
   describe "validate_length/3 with nonsupported types as input" do
-    test "does not add an error if value is nil" do
+    test "adds an error if value is `nil`" do
       data = nil
 
       assert %Dataset{
                data: ^data,
-               error: nil,
-               valid?: true
+               valid?: false,
+               error: %SingleError{
+                 validator: :length,
+                 message: "has incompatible type.",
+                 metadata: %{}
+               }
              } = Dredd.validate_length(data, is: 1)
     end
 
-    test "does not add an error if value is an empty string" do
+    test "adds an error if value is an empty string" do
       data = ""
 
       assert %Dataset{
                data: ^data,
-               error: nil,
-               valid?: true
+               valid?: false,
+               error: %SingleError{
+                 validator: :length,
+                 message: "should be %{count} character(s)",
+                 metadata: %{}
+               }
              } = Dredd.validate_length(data, is: 1)
     end
 
-    property "can correctly handle arbitrary data" do
+    property "adds an error for arbitrary wrong data" do
       check all(value <- term()) do
-        if (is_binary(value) and value != "") or is_list(value) do
+        if is_binary(value) or is_list(value) do
           assert %Dataset{
                    data: ^value,
                    valid?: false,
                    error: _error
-                 } = Dredd.validate_length(value, is: -1)
-        else
-          assert %Dataset{
-                   data: ^value,
-                   error: nil,
-                   valid?: true
                  } = Dredd.validate_length(value, is: -1)
         end
       end
@@ -532,6 +533,9 @@ defmodule Dredd.Validators.LengthTest do
                  }
                }
              } = Dredd.validate_length(value, is: count, message: message)
+    end
+
+    test "adds an error if given value is neither binary nor list" do
     end
 
     test "does an early abort if given dataset is already invalid" do

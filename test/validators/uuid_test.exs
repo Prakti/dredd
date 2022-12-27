@@ -28,7 +28,7 @@ defmodule Dredd.Validators.UUIDTest do
   end
 
   def invalid_uuid_gen do
-    filter(term(), fn data -> not (is_binary(data) and data == "") end)
+    filter(term(), fn data -> not is_binary(data) end)
   end
 
   describe "validate_uuid" do
@@ -64,6 +64,30 @@ defmodule Dredd.Validators.UUIDTest do
                  }
                } = Dredd.validate_uuid(wrong_uuid)
       end
+    end
+
+    test "sets an error if value is `nil`" do
+      assert %Dataset{
+               data: nil,
+               valid?: false,
+               error: %SingleError{
+                 validator: :uuid,
+                 message: "is not a valid uuid",
+                 metadata: %{}
+               }
+             } = Dredd.validate_uuid(nil)
+    end
+
+    test "sets an error if value is \"\"" do
+      assert %Dataset{
+               data: "",
+               valid?: false,
+               error: %SingleError{
+                 validator: :uuid,
+                 message: "is not a valid uuid",
+                 metadata: %{}
+               }
+             } = Dredd.validate_uuid("")
     end
 
     test "does an early abort if the given dataset is already invalid" do

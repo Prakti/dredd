@@ -60,7 +60,7 @@ defmodule Dredd.Validators.RequiredTest do
                  data: ^data,
                  valid?: true,
                  error: nil
-              } = Dredd.validate_required(data)
+               } = Dredd.validate_required(data)
       end
     end
 
@@ -72,7 +72,7 @@ defmodule Dredd.Validators.RequiredTest do
                  data: ^data,
                  valid?: true,
                  error: nil
-              } = Dredd.validate_required(data, trim?: false)
+               } = Dredd.validate_required(data, trim?: false)
       end
     end
 
@@ -81,12 +81,11 @@ defmodule Dredd.Validators.RequiredTest do
               data <- term(),
               not (is_binary(data) and String.valid?(data))
             ) do
-
         assert %Dredd.Dataset{
                  data: ^data,
                  valid?: true,
                  error: nil
-              } = Dredd.validate_required(data)
+               } = Dredd.validate_required(data)
       end
     end
 

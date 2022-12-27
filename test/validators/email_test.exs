@@ -49,12 +49,12 @@ defmodule Dredd.Validators.EmailTest do
   def invalid_email do
     filter(term(), fn data ->
       not (is_binary(data) and String.valid?(data) and
-             (data =~ ~r/\S+@\S+.\S+/ or data == ""))
+             data =~ ~r/\S+@\S+.\S+/)
     end)
   end
 
   describe "validate_email data from a map" do
-    property "correctly validates emails given in a map" do
+    property "correctly validates email values" do
       check all(email <- email()) do
         data = email
 
@@ -66,7 +66,7 @@ defmodule Dredd.Validators.EmailTest do
       end
     end
 
-    property "rejects everything that is not a valid email given in a map" do
+    property "rejects everything that is not a valid email" do
       check all(no_email <- invalid_email()) do
         data = no_email
 
@@ -112,6 +112,34 @@ defmodule Dredd.Validators.EmailTest do
                  }
                } = Dredd.validate_email(dataset)
       end
+    end
+
+    test "adds an error if value is `nil`" do
+      data = nil
+
+      assert %Dredd.Dataset{
+               data: ^data,
+               valid?: false,
+               error: %Dredd.SingleError{
+                 validator: :email,
+                 message: "is not a valid email address",
+                 metadata: %{}
+               }
+             } = Dredd.validate_email(data)
+    end
+
+    test "adds an error if value is the empty string" do
+      data = nil
+
+      assert %Dredd.Dataset{
+               data: ^data,
+               valid?: false,
+               error: %Dredd.SingleError{
+                 validator: :email,
+                 message: "is not a valid email address",
+                 metadata: %{}
+               }
+             } = Dredd.validate_email(data)
     end
 
     test "does an early abort if an already invalid dataset is given" do

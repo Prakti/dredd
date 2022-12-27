@@ -14,7 +14,7 @@ defmodule Dredd.Validators.Inclusion do
 
     message = Keyword.get(opts, :message, @default_message)
 
-    if value == nil || value == "" || value in enum do
+    if value in enum do
       dataset
     else
       Dredd.set_single_error(dataset, message, :inclusion, %{enum: enum})

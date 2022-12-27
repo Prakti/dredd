@@ -48,24 +48,34 @@ defmodule Dredd.Validators.InclusionTest do
              } = Dredd.validate_inclusion(data, enum, message: message)
     end
 
-    test "does not add an error if value is nil" do
+    test "adds an error if value is nil" do
       data = nil
+      enum = ["a value"]
 
       assert %Dataset{
                data: ^data,
-               error: nil,
-               valid?: true
-             } = Dredd.validate_inclusion(data, ["a value"])
+               error: %SingleError{
+                 validator: :inclusion,
+                 message: "is invalid",
+                 metadata: %{enum: ^enum}
+               },
+               valid?: false
+             } = Dredd.validate_inclusion(data, enum)
     end
 
     test "does not add an error if value is an empty string" do
       data = ""
+      enum = ["a value"]
 
       assert %Dataset{
                data: ^data,
-               error: nil,
-               valid?: true
-             } = Dredd.validate_inclusion(data, ["a value"])
+               error: %SingleError{
+                 validator: :inclusion,
+                 message: "is invalid",
+                 metadata: %{enum: ^enum}
+               },
+               valid?: false
+             } = Dredd.validate_inclusion(data, enum)
     end
 
     test "does an early abort if given dataset is already invalid" do

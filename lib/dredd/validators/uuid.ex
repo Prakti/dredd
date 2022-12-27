@@ -14,7 +14,7 @@ defmodule Dredd.Validators.UUID do
 
     data = dataset.data
 
-    if data == nil || data == "" || is_uuid?(data) do
+    if is_uuid?(data) do
       dataset
     else
       Dredd.set_single_error(dataset, @default_message, :uuid)

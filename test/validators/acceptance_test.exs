@@ -1,13 +1,18 @@
 defmodule Dredd.Validators.AcceptanceTest do
   use ExUnit.Case, async: true
+  use ExUnitProperties
 
   alias Dredd.{
     Dataset,
     SingleError
   }
 
+  def everything_but_true do
+    filter(term(), fn data -> data != true end)
+  end
+
   describe "validate_acceptance/3" do
-    test "adds an error if value is not `true`" do
+    test "adds an error if value is `false`" do
       data = false
 
       assert %Dataset{
@@ -21,6 +26,20 @@ defmodule Dredd.Validators.AcceptanceTest do
              } = Dredd.validate_acceptance(data)
     end
 
+    property "adds an error if value is everything but `true`" do
+      check all(data <- everything_but_true()) do
+        assert %Dataset{
+                 data: ^data,
+                 error: %SingleError{
+                   validator: :acceptance,
+                   message: "must be accepted",
+                   metadata: %{}
+                 },
+                 valid?: false
+               } = Dredd.validate_acceptance(data)
+      end
+    end
+
     test "does not add an error if value is `true`" do
       data = true
 
@@ -31,13 +50,17 @@ defmodule Dredd.Validators.AcceptanceTest do
              } = Dredd.validate_acceptance(data)
     end
 
-    test "does not add an error if value is `nil`" do
+    test "adds an error if value is `nil`" do
       data = nil
 
       assert %Dataset{
                data: ^data,
-               error: nil,
-               valid?: true
+               error: %SingleError{
+                 validator: :acceptance,
+                 message: "must be accepted",
+                 metadata: %{}
+               },
+               valid?: false
              } = Dredd.validate_acceptance(data)
     end
 

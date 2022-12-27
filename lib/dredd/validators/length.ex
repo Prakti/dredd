@@ -1,6 +1,8 @@
 defmodule Dredd.Validators.Length do
   @moduledoc false
 
+  # TODO: 2022-12-27 - Move into string, binary, and list validator
+
   @default_message %{
     string: %{
       is: "should be %{count} character(s)",
@@ -16,7 +18,8 @@ defmodule Dredd.Validators.Length do
       is: "should have %{count} item(s)",
       min: "should have at least %{count} item(s)",
       max: "should have at most %{count} item(s)"
-    }
+    },
+    wrong_type: "has incompatible type."
   }
 
   def call(%Dredd.Dataset{valid?: false} = dataset, _opts) do
@@ -46,10 +49,6 @@ defmodule Dredd.Validators.Length do
   # private
   #
 
-  defp validate("", _opts) do
-    :ok
-  end
-
   defp validate(value, %{count: :codepoints} = opts) when is_binary(value) do
     check(:string, length(String.codepoints(value)), opts)
   end
@@ -66,8 +65,10 @@ defmodule Dredd.Validators.Length do
     check(:list, length(value), opts)
   end
 
-  defp validate(_value, _opts) do
-    :ok
+  defp validate(_value, opts) do
+    message = Map.get(opts, :message, get_in(@default_message, [:wrong_type]))
+
+    {message, :length, %{}}
   end
 
   defp check(type, len, %{is: count} = opts) when len != count do

@@ -1,6 +1,8 @@
 defmodule Dredd.Validators.Type do
   @moduledoc false
 
+  # TODO: 2022-12-27 - Break out into one validator per type
+
   @available_types [
     :boolean,
     :float,
@@ -9,7 +11,7 @@ defmodule Dredd.Validators.Type do
     :pos_integer,
     :string,
     :list,
-    :map,
+    :map
   ]
 
   @default_message "has invalid type"
@@ -23,11 +25,7 @@ defmodule Dredd.Validators.Type do
 
     value = dataset.data
 
-    if value == nil || value == "" do
-      dataset
-    else
-      validate(dataset, type, value, opts)
-    end
+    validate(dataset, type, value, opts)
   end
 
   defp validate(dataset, type, value, opts) do

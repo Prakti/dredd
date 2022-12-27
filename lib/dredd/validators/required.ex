@@ -6,6 +6,8 @@ defmodule Dredd.Validators.Required do
     SingleError
   }
 
+  # TODO: 2022-12-27 - Move trimming of strings into own string validator
+
   @default_message "can't be blank"
 
   def call(%Dataset{valid?: false} = dataset, _opts) do

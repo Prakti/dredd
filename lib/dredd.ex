@@ -43,7 +43,9 @@ defmodule Dredd do
     to: Dredd.Validators.List,
     as: :call
 
-  @type validator_map :: %{any() => single_validator_fun()}
+  @type field_spec :: single_validator_fun() | {:optional, single_validator_fun()}
+
+  @type validator_map :: %{any() => field_spec()}
 
   @doc """
     Validates the structure of a Map, Keyword List, Struct or anything else

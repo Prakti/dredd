@@ -1,6 +1,8 @@
 defmodule Dredd.Validators.List do
   @moduledoc false
 
+  # TODO: 2022-12-27 - add length validation
+
   alias Dredd.{
     Dataset,
     ListErrors

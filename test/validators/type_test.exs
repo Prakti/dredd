@@ -138,28 +138,28 @@ defmodule Validators.TypeTest do
       data = 0
 
       assert %Dataset{
-        data: ^data,
-        error: %SingleError{
-          validator: :type,
-          message: "has invalid type",
-          metadata: %{type: :list}
-        },
-        valid?: false
-      } = Dredd.validate_type(data, :list)
+               data: ^data,
+               error: %SingleError{
+                 validator: :type,
+                 message: "has invalid type",
+                 metadata: %{type: :list}
+               },
+               valid?: false
+             } = Dredd.validate_type(data, :list)
     end
 
     test "adds an error if value does not match type :map" do
       data = "wrooong"
 
       assert %Dataset{
-        data: ^data,
-        valid?: false,
-        error: %SingleError{
-          validator: :type,
-          message: "has invalid type",
-          metadata: %{type: :map}
-        }
-      } = Dredd.validate_type(data, :map)
+               data: ^data,
+               valid?: false,
+               error: %SingleError{
+                 validator: :type,
+                 message: "has invalid type",
+                 metadata: %{type: :map}
+               }
+             } = Dredd.validate_type(data, :map)
     end
 
     test "raises an ArgumentError if type is not recognized" do
@@ -232,20 +232,20 @@ defmodule Validators.TypeTest do
       data = [1, 2, 3]
 
       assert %Dataset{
-        data: ^data,
-        error: nil,
-        valid?: true
-      } = Dredd.validate_type(data, :list)
+               data: ^data,
+               error: nil,
+               valid?: true
+             } = Dredd.validate_type(data, :list)
     end
 
     test "does not add an error if value matches type :map" do
       data = %{foo: "bar", bang: 10}
 
       assert %Dataset{
-        data: ^data,
-        error: nil,
-        valid?: true
-      } = Dredd.validate_type(data, :map)
+               data: ^data,
+               error: nil,
+               valid?: true
+             } = Dredd.validate_type(data, :map)
     end
 
     test "uses a custom error message when provided" do
@@ -286,14 +286,18 @@ defmodule Validators.TypeTest do
              } = Dredd.validate_type(data, :boolean)
     end
 
-    test "does not add an error if value is nil" do
+    test "adds an error if value is `nil`" do
       data = nil
 
       assert %Dataset{
-        data: ^data,
-        error: nil,
-        valid?: true
-      } = Dredd.validate_type(data, :boolean)
+               data: ^data,
+               error: %SingleError{
+                 validator: :type,
+                 message: "has invalid type",
+                 metadata: %{type: :boolean}
+               },
+               valid?: false
+             } = Dredd.validate_type(data, :boolean)
     end
   end
 end

@@ -65,5 +65,17 @@ defmodule Dredd.Validators.NanoIDTest do
                }
              } = Dredd.validate_nanoid(data)
     end
+
+    test "adds an error if given value is `nil`" do
+      assert %Dataset{
+               data: nil,
+               valid?: false,
+               error: %SingleError{
+                 validator: :nanoid,
+                 message: "is not a valid NanoID",
+                 metadata: %{}
+               }
+             } = Dredd.validate_nanoid(nil)
+    end
   end
 end

@@ -70,6 +70,24 @@ defmodule Dredd.Validators.ListTest do
              } = Dredd.validate_list(data, validator)
     end
 
+    test "sets a SingleError if given value is `nil`" do
+      data = nil
+
+      validator = fn data ->
+        Dredd.validate_type(data, :string)
+      end
+
+      assert %Dataset{
+               data: ^data,
+               valid?: false,
+               error: %SingleError{
+                 validator: :type,
+                 message: "has invalid type",
+                 metadata: %{type: :list}
+               }
+             } = Dredd.validate_list(data, validator)
+    end
+
     test "does an early abort if a given dataset is already invalid" do
       data = %Dataset{
         data: [],

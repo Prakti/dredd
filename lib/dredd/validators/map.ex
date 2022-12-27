@@ -3,7 +3,7 @@ defmodule Dredd.Validators.Map do
 
   alias Dredd.{
     Dataset,
-    MapErrors,
+    MapErrors
   }
 
   def call(%Dataset{valid?: false} = dataset, _validator_map) do
@@ -15,16 +15,18 @@ defmodule Dredd.Validators.Map do
     type_result = Dredd.validate_type(dataset.data, :map)
 
     if type_result.valid? do
-      map_errors = validate(dataset.data, validator_map)
+      data = dataset.data
 
-      if Enum.empty?(map_errors)do
+      {_, error_map} = Enum.reduce(validator_map, {data, %{}}, &validate_field/2)
+
+      if Enum.empty?(error_map) do
         dataset
-      else 
+      else
         %Dataset{
           data: dataset.data,
           valid?: false,
           error: %MapErrors{
-            errors: map_errors
+            errors: error_map
           }
         }
       end
@@ -33,18 +35,30 @@ defmodule Dredd.Validators.Map do
     end
   end
 
-  defp validate(data, validator_map) do
-    validator_map
-    |> Enum.reduce(%{}, fn {fieldname, validator}, error_map -> 
-      value = Access.get(data, fieldname, nil)
+  defp validate_field({fieldname, field_spec}, {data, error_map}) do
+    value = Access.get(data, fieldname, nil)
 
-      result = validator.(value)
+    result =
+      case field_spec do
+        {:optional, validator} ->
+          is_null_or_validate(value, validator)
 
-      if result.valid? do
-        error_map
-      else
-        Map.put(error_map, fieldname, result.error)
+        validator ->
+          validator.(value)
       end
-    end)
+
+    if result.valid? do
+      {data, error_map}
+    else
+      {data, Map.put(error_map, fieldname, result.error)}
+    end
+  end
+
+  defp is_null_or_validate(value, validator) do
+    if value == nil || value == "" do
+      %Dataset{data: value, valid?: true, error: nil}
+    else
+      validator.(value)
+    end
   end
 end

@@ -16,7 +16,7 @@ defmodule Dredd.Validators.Email do
 
     message = Keyword.get(opts, :message, @default_message)
 
-    if value == nil || is_email?(value) do
+    if is_email?(value) do
       dataset
     else
       Dredd.set_single_error(dataset, message, :email)
