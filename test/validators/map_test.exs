@@ -53,7 +53,7 @@ defmodule Dredd.Validators.MapTest do
                    },
                    field_b: %SingleError{
                      validator: :number,
-                     message: "is not a number",
+                     message: "has incorrect numerical type",
                      metadata: %{kind: :integer}
                    }
                  }

@@ -1,8 +1,6 @@
 defmodule Dredd.Validators.Number do
   @moduledoc false
 
-  # TODO: 2022-12-27 - Support valure ranges
-
   @available_types [
     :float,
     :integer,
@@ -10,7 +8,10 @@ defmodule Dredd.Validators.Number do
     :pos_integer
   ]
 
-  @default_message "is not a number"
+  @default_message %{
+    type: "has incorrect numerical type",
+    predicate: "violates the given predicate"
+  }
 
   def call(%Dredd.Dataset{valid?: false} = dataset, _type, _opts) do
     dataset
@@ -25,35 +26,45 @@ defmodule Dredd.Validators.Number do
   end
 
   defp validate(dataset, type, value, opts) do
-    if check(type, value) do
-      dataset
+    if check_type(type, value) do
+      predicate = Keyword.get(opts, :predicate, &accept_all/1)
+
+      if predicate.(value) do
+        dataset
+      else
+        message = Keyword.get(opts, :predicate_message, @default_message.predicate)
+
+        Dredd.set_single_error(dataset, message, :number, %{kind: :predicate})
+      end
     else
-      message = Keyword.get(opts, :message, @default_message)
+      message = Keyword.get(opts, :type_message, @default_message.type)
 
       Dredd.set_single_error(dataset, message, :number, %{kind: type})
     end
   end
 
-  defp check(:float, value) do
+  defp check_type(:float, value) do
     is_float(value)
   end
 
-  defp check(:integer, value) do
+  defp check_type(:integer, value) do
     is_integer(value)
   end
 
-  defp check(:non_neg_integer, value) do
+  defp check_type(:non_neg_integer, value) do
     is_integer(value) && value >= 0
   end
 
-  defp check(:pos_integer, value) do
+  defp check_type(:pos_integer, value) do
     is_integer(value) && value > 0
   end
 
-  defp check(type, _value) do
+  defp check_type(type, _value) do
     available_types = Enum.map_join(@available_types, ", ", &inspect/1)
 
     raise ArgumentError,
           "unknown number #{inspect(type)} given to Dredd.validate_number/3.\n\n Available types: #{available_types}"
   end
+
+  defp accept_all(_), do: true
 end
