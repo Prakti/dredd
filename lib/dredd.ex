@@ -8,14 +8,11 @@ defmodule Dredd do
   [1]: readme.html
   """
 
-  @type type_t ::
+  @type number_t ::
           :float
           | :integer
           | :non_neg_integer
           | :pos_integer
-          | :list
-          | :struct
-          | :map
 
   @doc """
   Validates the given values is of type boolean. Optionally also validates
@@ -243,24 +240,22 @@ defmodule Dredd do
     as: :call
 
   @doc """
-  Validates that the value of a field is a specific type.
+  Validates that the value of a field is a number.
 
   Supported types:
 
-  * `:boolean`
   * `:float`
   * `:integer`
   * `:non_neg_integer`
   * `:pos_integer`
-  * `:string`
 
   ## Options
 
   * `:message` - error message, defaults to "has invalid type"
   """
-  @spec validate_type(any, type_t, Keyword.t()) :: Dredd.Dataset.t()
-  defdelegate validate_type(dataset, type, opts \\ []),
-    to: Dredd.Validators.Type,
+  @spec validate_number(any, number_t, Keyword.t()) :: Dredd.Dataset.t()
+  defdelegate validate_number(dataset, type, opts \\ []),
+    to: Dredd.Validators.Number,
     as: :call
 
   @doc """

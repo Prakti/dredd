@@ -1,17 +1,16 @@
-defmodule Dredd.Validators.Type do
+defmodule Dredd.Validators.Number do
   @moduledoc false
 
-  # TODO: 2022-12-27 - Break out into one validator per type
+  # TODO: 2022-12-27 - Support valure ranges
 
   @available_types [
     :float,
     :integer,
     :non_neg_integer,
     :pos_integer,
-    :map
   ]
 
-  @default_message "has invalid type"
+  @default_message "is not a number"
 
   def call(%Dredd.Dataset{valid?: false} = dataset, _type, _opts) do
     dataset
@@ -31,7 +30,7 @@ defmodule Dredd.Validators.Type do
     else
       message = Keyword.get(opts, :message, @default_message)
 
-      Dredd.set_single_error(dataset, message, :type, %{type: type})
+      Dredd.set_single_error(dataset, message, :number, %{kind: type})
     end
   end
 
@@ -55,6 +54,6 @@ defmodule Dredd.Validators.Type do
     available_types = Enum.map_join(@available_types, ", ", &inspect/1)
 
     raise ArgumentError,
-          "unknown type #{inspect(type)} given to Dredd.validate_type/4.\n\n Available types: #{available_types}"
+          "unknown number #{inspect(type)} given to Dredd.validate_number/3.\n\n Available types: #{available_types}"
   end
 end

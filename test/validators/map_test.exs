@@ -14,8 +14,8 @@ defmodule Dredd.Validators.MapTest do
       value = "foo"
 
       structure = %{
-        field_a: fn data -> Dredd.validate_type(data, :string) end,
-        field_b: fn data -> Dredd.validate_type(data, :integer) end
+        field_a: fn data -> Dredd.validate_string(data) end,
+        field_b: fn data -> Dredd.validate_number(data, :integer) end
       }
 
       assert %Dataset{
@@ -37,7 +37,7 @@ defmodule Dredd.Validators.MapTest do
 
       structure = %{
         field_a: fn data -> Dredd.validate_string(data) end,
-        field_b: fn data -> Dredd.validate_type(data, :integer) end
+        field_b: fn data -> Dredd.validate_number(data, :integer) end
       }
 
       assert %Dataset{
@@ -52,9 +52,9 @@ defmodule Dredd.Validators.MapTest do
                      metadata: %{kind: :type}
                    },
                    field_b: %SingleError{
-                     validator: :type,
-                     message: "has invalid type",
-                     metadata: %{type: :integer}
+                     validator: :number,
+                     message: "is not a number",
+                     metadata: %{kind: :integer}
                    }
                  }
                }
@@ -69,7 +69,7 @@ defmodule Dredd.Validators.MapTest do
 
       structure = %{
         field_a: fn data -> Dredd.validate_string(data) end,
-        field_b: fn data -> Dredd.validate_type(data, :integer) end
+        field_b: fn data -> Dredd.validate_number(data, :integer) end
       }
 
       assert %Dataset{
@@ -86,8 +86,8 @@ defmodule Dredd.Validators.MapTest do
       }
 
       structure = %{
-        field_a: {:optional, fn data -> Dredd.validate_type(data, :string) end},
-        field_b: fn data -> Dredd.validate_type(data, :integer) end
+        field_a: {:optional, fn data -> Dredd.validate_string(data) end},
+        field_b: fn data -> Dredd.validate_number(data, :integer) end
       }
 
       assert %Dataset{
@@ -109,8 +109,8 @@ defmodule Dredd.Validators.MapTest do
       }
 
       structure = %{
-        field_a: fn data -> Dredd.validate_type(data, :string) end,
-        field_b: fn data -> Dredd.validate_type(data, :integer) end
+        field_a: fn data -> Dredd.validate_string(data) end,
+        field_b: fn data -> Dredd.validate_number(data, :integer) end
       }
 
       assert ^value = Dredd.validate_map(value, structure)

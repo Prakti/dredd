@@ -7,7 +7,7 @@ defmodule Validators.TypeTest do
     SingleError
   }
 
-  describe "validate_type/2" do
+  describe "validate_number/3" do
 
     test "adds an error if value does not match type :float" do
       data = "value"
@@ -15,12 +15,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :float}
+                 validator: :number,
+                 message: "is not a number",
+                 metadata: %{kind: :float}
                },
                valid?: false
-             } = Dredd.validate_type(data, :float)
+             } = Dredd.validate_number(data, :float)
     end
 
     test "adds an error if value does not match type :integer" do
@@ -29,12 +29,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :integer}
+                 validator: :number,
+                 message: "is not a number",
+                 metadata: %{kind: :integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :integer)
+             } = Dredd.validate_number(data, :integer)
     end
 
     test "adds an error if value does not match type :non_neg_integer" do
@@ -43,12 +43,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :non_neg_integer}
+                 validator: :number,
+                 message: "is not a number",
+                 metadata: %{kind: :non_neg_integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :non_neg_integer)
+             } = Dredd.validate_number(data, :non_neg_integer)
     end
 
     test "adds an error if value is -1 for type :non_neg_integer" do
@@ -57,12 +57,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :non_neg_integer}
+                 validator: :number,
+                 message: "is not a number",
+                 metadata: %{kind: :non_neg_integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :non_neg_integer)
+             } = Dredd.validate_number(data, :non_neg_integer)
     end
 
     test "adds an error if value does not match type :pos_integer" do
@@ -71,12 +71,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :pos_integer}
+                 validator: :number,
+                 message: "is not a number",
+                 metadata: %{kind: :pos_integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :pos_integer)
+             } = Dredd.validate_number(data, :pos_integer)
     end
 
     test "adds an error if value is 0 for type :pos_integer" do
@@ -85,12 +85,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :pos_integer}
+                 validator: :number,
+                 message: "is not a number",
+                 metadata: %{kind: :pos_integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :pos_integer)
+             } = Dredd.validate_number(data, :pos_integer)
     end
 
     test "adds an error if value is -1 for type :pos_integer" do
@@ -99,12 +99,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :pos_integer}
+                 validator: :number,
+                 message: "is not a number",
+                 metadata: %{kind: :pos_integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :pos_integer)
+             } = Dredd.validate_number(data, :pos_integer)
     end
 
 
@@ -112,7 +112,7 @@ defmodule Validators.TypeTest do
     test "raises an ArgumentError if type is not recognized" do
       data = "value"
 
-      assert_raise ArgumentError, fn -> Dredd.validate_type(data, :nope) end
+      assert_raise ArgumentError, fn -> Dredd.validate_number(data, :nope) end
     end
 
     test "does not add an error if value matches type :float" do
@@ -122,7 +122,7 @@ defmodule Validators.TypeTest do
                data: ^data,
                error: nil,
                valid?: true
-             } = Dredd.validate_type(data, :float)
+             } = Dredd.validate_number(data, :float)
     end
 
     test "does not add an error if value matches type :integer" do
@@ -132,7 +132,7 @@ defmodule Validators.TypeTest do
                data: ^data,
                error: nil,
                valid?: true
-             } = Dredd.validate_type(data, :integer)
+             } = Dredd.validate_number(data, :integer)
     end
 
     test "does not add an error if value matches type :non_neg_integer" do
@@ -142,7 +142,7 @@ defmodule Validators.TypeTest do
                data: ^data,
                error: nil,
                valid?: true
-             } = Dredd.validate_type(data, :non_neg_integer)
+             } = Dredd.validate_number(data, :non_neg_integer)
     end
 
     test "does not add an error if value matches type :pos_integer" do
@@ -152,7 +152,7 @@ defmodule Validators.TypeTest do
                data: ^data,
                error: nil,
                valid?: true
-             } = Dredd.validate_type(data, :pos_integer)
+             } = Dredd.validate_number(data, :pos_integer)
     end
 
     test "uses a custom error message when provided" do
@@ -163,12 +163,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
+                 validator: :number,
                  message: ^message,
-                 metadata: %{type: :integer}
+                 metadata: %{kind: :integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :integer, message: message)
+             } = Dredd.validate_number(data, :integer, message: message)
     end
 
     test "passes through invalid datasets and does not execute validation" do
@@ -190,7 +190,7 @@ defmodule Validators.TypeTest do
                  metadata: %{}
                },
                valid?: false
-             } = Dredd.validate_type(data, :integer)
+             } = Dredd.validate_number(data, :integer)
     end
 
     test "adds an error if value is `nil`" do
@@ -199,12 +199,12 @@ defmodule Validators.TypeTest do
       assert %Dataset{
                data: ^data,
                error: %SingleError{
-                 validator: :type,
-                 message: "has invalid type",
-                 metadata: %{type: :integer}
+                 validator: :number,
+                 message: "is not a number",
+                 metadata: %{kind: :integer}
                },
                valid?: false
-             } = Dredd.validate_type(data, :integer)
+             } = Dredd.validate_number(data, :integer)
     end
   end
 end

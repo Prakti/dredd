@@ -10,7 +10,6 @@ defmodule Dredd.Validators.ListTest do
     SingleError
   }
 
-
   # TODO: 2022-12-27 - Test error-message overrides
 
   describe "validate_list" do
@@ -229,7 +228,7 @@ defmodule Dredd.Validators.ListTest do
       data = 100
 
       validator = fn data ->
-        Dredd.validate_type(data, :string)
+        Dredd.validate_string(data)
       end
 
       assert %Dataset{
@@ -247,7 +246,7 @@ defmodule Dredd.Validators.ListTest do
       data = nil
 
       validator = fn data ->
-        Dredd.validate_type(data, :string)
+        Dredd.validate_string(data)
       end
 
       assert %Dataset{
@@ -273,7 +272,7 @@ defmodule Dredd.Validators.ListTest do
       }
 
       validator = fn data ->
-        Dredd.validate_type(data, :string)
+        Dredd.validate_string(data)
       end
 
       assert %Dataset{
