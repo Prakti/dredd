@@ -1,8 +1,6 @@
 defmodule Dredd.Validators.List do
   @moduledoc false
 
-  # TODO: 2022-12-27 - Think about renaming length parameters
-
   alias Dredd.{
     Dataset,
     ListErrors
@@ -10,9 +8,9 @@ defmodule Dredd.Validators.List do
 
   @default_message %{
     type: "is not a list",
-    is: "should have %{count} item(s)",
-    min: "should have at least %{count} item(s)",
-    max: "should have at most %{count} item(s)"
+    exact_length: "should have %{count} item(s)",
+    min_length: "should have at least %{count} item(s)",
+    max_length: "should have at most %{count} item(s)"
   }
 
   def call(%Dataset{valid?: false} = dataset, _validator, _opts) do
@@ -46,22 +44,22 @@ defmodule Dredd.Validators.List do
     |> check_length(opts)
   end
 
-  defp check_length(len, %{is: count} = opts) when len != count do
-    message = Map.get(opts, :is_message, @default_message.is)
+  defp check_length(len, %{exact_length: count} = opts) when len != count do
+    message = Map.get(opts, :exact_length_message, @default_message.exact_length)
 
-    {message, %{count: count, kind: :is}}
+    {message, %{count: count, kind: :exact_length}}
   end
 
-  defp check_length(len, %{min: count} = opts) when len < count do
-    message = Map.get(opts, :min_message, @default_message.min)
+  defp check_length(len, %{min_length: count} = opts) when len < count do
+    message = Map.get(opts, :min_length_message, @default_message.min_length)
 
-    {message, %{count: count, kind: :min}}
+    {message, %{count: count, kind: :min_length}}
   end
 
-  defp check_length(len, %{max: count} = opts) when len > count do
-    message = Map.get(opts, :max_message, @default_message.max)
+  defp check_length(len, %{max_length: count} = opts) when len > count do
+    message = Map.get(opts, :max_length_message, @default_message.max_length)
 
-    {message, %{count: count, kind: :max}}
+    {message, %{count: count, kind: :max_length}}
   end
 
   defp check_length(_len, _opts) do
