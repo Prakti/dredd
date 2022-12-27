@@ -7,8 +7,6 @@ defmodule Dredd.Validators.BinaryTest do
     SingleError
   }
 
-  # TODO: 2022-12-27 - Test error-message overrides
-
   describe "validate_binary/2" do
     test "adds an error if value is not a binary" do
       data = nil
@@ -64,7 +62,7 @@ defmodule Dredd.Validators.BinaryTest do
                  data: ^value,
                  error: nil,
                  valid?: true
-               } = Dredd.validate_binary(value, is: correct_length)
+               } = Dredd.validate_binary(value, exact_length: correct_length)
       end
     end
 
@@ -76,7 +74,7 @@ defmodule Dredd.Validators.BinaryTest do
                  data: ^value,
                  error: nil,
                  valid?: true
-               } = Dredd.validate_binary(value, min: min_length)
+               } = Dredd.validate_binary(value, min_length: min_length)
       end
     end
 
@@ -88,7 +86,7 @@ defmodule Dredd.Validators.BinaryTest do
                  data: ^value,
                  error: nil,
                  valid?: true
-               } = Dredd.validate_binary(value, max: max_length)
+               } = Dredd.validate_binary(value, max_length: max_length)
       end
     end
 
@@ -109,7 +107,7 @@ defmodule Dredd.Validators.BinaryTest do
           message: "should be %{count} byte(s)",
           metadata: %{
             count: wrong_length,
-            kind: :is
+            kind: :exact_length
           }
         }
 
@@ -117,7 +115,7 @@ defmodule Dredd.Validators.BinaryTest do
                  data: ^value,
                  error: ^expected_error,
                  valid?: false
-               } = Dredd.validate_binary(value, is: wrong_length)
+               } = Dredd.validate_binary(value, exact_length: wrong_length)
       end
     end
 
@@ -136,10 +134,10 @@ defmodule Dredd.Validators.BinaryTest do
                    message: "should be at least %{count} byte(s)",
                    metadata: %{
                      count: ^wrong_length,
-                     kind: :min
+                     kind: :min_length
                    }
                  }
-               } = Dredd.validate_binary(value, min: wrong_length)
+               } = Dredd.validate_binary(value, min_length: wrong_length)
       end
     end
 
@@ -162,11 +160,71 @@ defmodule Dredd.Validators.BinaryTest do
                    message: "should be at most %{count} byte(s)",
                    metadata: %{
                      count: ^wrong_length,
-                     kind: :max
+                     kind: :max_length
                    }
                  }
-               } = Dredd.validate_binary(value, max: wrong_length)
+               } = Dredd.validate_binary(value, max_length: wrong_length)
       end
+    end
+
+    test "allows override of `type_message`" do
+      data = nil
+      message = "type message"
+
+      assert %Dataset{
+               data: ^data,
+               error: %SingleError{
+                 validator: :binary,
+                 message: ^message,
+                 metadata: %{kind: :type}
+               },
+               valid?: false
+             } = Dredd.validate_binary(data, type_message: message)
+    end
+
+    test "allows override of `exact_length_message`" do
+      data = "foo"
+      message = "exact length message"
+
+      assert %Dataset{
+               data: ^data,
+               error: %SingleError{
+                 validator: :binary,
+                 message: ^message,
+                 metadata: %{kind: :exact_length, count: 10}
+               },
+               valid?: false
+             } = Dredd.validate_binary(data, exact_length: 10, exact_length_message: message)
+    end
+
+    test "allows override of `min_length_message`" do
+      data = "foo"
+      message = "min length message"
+
+      assert %Dataset{
+               data: ^data,
+               error: %SingleError{
+                 validator: :binary,
+                 message: ^message,
+                 metadata: %{kind: :min_length, count: 10}
+               },
+               valid?: false
+             } = Dredd.validate_binary(data, min_length: 10, min_length_message: message)
+    end
+
+    test "allows override of `max_length_message`" do
+      data = "this is way too long, Dude!"
+      message = "max length message"
+
+      assert %Dataset{
+               data: ^data,
+               error: %SingleError{
+                 validator: :binary,
+                 message: ^message,
+                 metadata: %{kind: :max_length, count: 10}
+               },
+               valid?: false
+             } = Dredd.validate_binary(data, max_length: 10, max_length_message: message)
     end
 
     test "passes through invalid datasets and does not execute validation" do
