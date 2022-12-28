@@ -65,7 +65,7 @@ defmodule Dredd do
 
   @doc """
   Validates the given values is of type string. Optionally also validates
-  the length of the string either as codepoints of graphemes.
+  the length of the string either as codepoints or graphemes.
 
   ## Options
   * `:is` - exact required length of a string
@@ -120,8 +120,7 @@ defmodule Dredd do
     as: :call
 
   @doc """
-  Validates the given values binaries. Optionally also validates
-  the length of the binary either .
+  Validates the given values binaries. Optionally also validates the length of the binary either .
 
   ## Options
   * `:is` - exact required length of a binary
@@ -146,7 +145,7 @@ defmodule Dredd do
   @type single_validator_fun :: (any() -> Dredd.Dataset.t())
 
   @doc """
-    Applies a validator function to a each element of a list contained in a field.
+  Applies a validator function to a each element of a list contained in a field.
 
   ## Options
   * `:is` - exact required length of a list
@@ -162,6 +161,10 @@ defmodule Dredd do
     defaults to "should be at least %{count} item(s)"
   * `:max_message` - error message in case the length is too long
     defaults to "should be at "should be at most %{count} item(s)"
+
+  ## Example
+  ```elixir
+  ```
   """
   @spec validate_list(any(), single_validator_fun(), Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_list(dataset, validator, opts \\ []),
@@ -173,15 +176,43 @@ defmodule Dredd do
   @type validator_map :: %{any() => field_spec()}
 
   @doc """
-    Validates the structure of a Map, Keyword List, Struct or anything else
-    that supports the Access behaviour and whose structure can be represented
-    by a map.
+  Validates the structure of a Map, Keyword List, Struct or anything else
+  that supports the Access behaviour and whose structure can be represented
+  by a map.
 
   ## Options
   * `message` - error message in case the type-check fails
      defaults to: "is not a map"
 
-  ## TODO: 2022-12-22 - Write Example
+  ## Example
+  ```elixir
+  iex> value = %{ field_a: 10, field_b: "foo" }
+  %{field_a: 10, field_b: "foo"}
+  iex> validator_map = %{
+  ...>   field_a: &Dredd.validate_string/1,
+  ...>   field_b: fn data -> Dredd.validate_number(data, :integer) end
+  ...>}
+  iex> Dredd.validate_map(value, validator_map)
+  %Dredd.Dataset{
+    data: %{field_a: 10, field_b: "foo"},
+    error: %Dredd.MapErrors{
+      validator: :map,
+      errors: %{
+        field_a: %Dredd.SingleError{
+          validator: :string,
+          message: "is not a string",
+          metadata: %{kind: :type}
+        },
+        field_b: %Dredd.SingleError{
+          validator: :number,
+          message: "has incorrect numerical type",
+          metadata: %{kind: :integer}
+        }
+      }
+    },
+    valid?: false
+  }
+  ```
   """
   @spec validate_map(any(), validator_map(), Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_map(dataset, validator_map, opts \\ []),
@@ -283,6 +314,13 @@ defmodule Dredd do
     to: Dredd.Validators.NanoID,
     as: :call
 
+  @doc """
+  This is a convenience function in case you want to write your own
+  validators. It will set the `valid?` flag of the given `Dredd.Dataset` to false.
+  It will also create a `Dredd.SingleError` structure with the given values
+  and assing it to the `error` field of the `Dredd.Dataset`.
+  """
+  @spec set_single_error(Dredd.Dataset.t(), String.t(), atom(), map()) :: Dredd.Dataset.t()
   def set_single_error(dataset, message, validator, metadata \\ %{}) do
     %Dredd.Dataset{
       dataset
