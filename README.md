@@ -1,5 +1,5 @@
 # Dredd
-Dredd judges data for you. It's a validator for a wide range of
+Dredd judges data for you. It's a validator for a wide range of possibilities.
 
 datastructures. 
 Started as a frok of [Justify][2] it's been rewritten to handle plain values
