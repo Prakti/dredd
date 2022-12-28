@@ -17,7 +17,7 @@ jobs:
       - run: mix credo --strict --ignore todo
     strategy:
       matrix:
-        elixir: ['1.11.x', '1.12.x', '1.13.x', '1.14.x']
+        elixir: ['1.12.x', '1.13.x', '1.14.x']
         otp: ['22.x', '23.x', '24.x', '25.x']
 
   dialyzer:
@@ -36,7 +36,7 @@ jobs:
       - run: mix dialyzer
     strategy:
       matrix:
-        elixir: ['1.11.x', '1.12.x', '1.13.x', '1.14.x']
+        elixir: ['1.12.x', '1.13.x', '1.14.x']
         otp: ['22.x', '23.x', '24.x', '25.x']
   test:
     runs-on: ubuntu-20.04
@@ -54,5 +54,5 @@ jobs:
       - run: mix test
     strategy:
       matrix:
-        elixir: ['1.11.x', '1.12.x', '1.13.x', '1.14.x']
+        elixir: ['1.12.x', '1.13.x', '1.14.x']
         otp: ['22.x', '23.x', '24.x', '25.x']

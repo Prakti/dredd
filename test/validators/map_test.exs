@@ -5,8 +5,8 @@ defmodule Dredd.Validators.MapTest do
 
   alias Dredd.{
     Dataset,
-    SingleError,
-    MapErrors
+    MapErrors,
+    SingleError
   }
 
   describe "validate_map/2" do
