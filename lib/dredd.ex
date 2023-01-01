@@ -269,7 +269,11 @@ defmodule Dredd do
 
   ## Options
 
-  * `:message` - error message, defaults to "has invalid type"
+  * ´predicate` - function of type `(any -> boolean)`
+  * `:type_message` - error message in case the type is wrong.
+    Defaults to "has incorrect numerical type"
+  * `:predicate_message` - error message in case the predicate check fails.
+    Defaults to "violates the given predicate"
   """
   @spec validate_number(any, number_t, Keyword.t()) :: Dredd.Dataset.t()
   defdelegate validate_number(dataset, type, opts \\ []),

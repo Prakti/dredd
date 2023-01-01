@@ -40,7 +40,7 @@ defmodule Dredd.Validators.Map do
   end
 
   defp validate_field({fieldname, field_spec}, {data, error_map}) do
-    value = Access.get(data, fieldname, nil)
+    value = Map.get(data, fieldname, nil)
 
     result =
       case field_spec do

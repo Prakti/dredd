@@ -9,6 +9,10 @@ defmodule Dredd.Validators.MapTest do
     SingleError
   }
 
+  defmodule TestStruct do
+    defstruct field_a: nil, field_b: nil
+  end
+
   describe "validate_map/2" do
     test "returns an error if the value is not a map" do
       value = "foo"
@@ -61,8 +65,26 @@ defmodule Dredd.Validators.MapTest do
              } = Dredd.validate_map(value, structure)
     end
 
-    test "correctly handles valid structs" do
+    test "correctly handles valid maps" do
       value = %{
+        field_a: "string",
+        field_b: 100
+      }
+
+      structure = %{
+        field_a: fn data -> Dredd.validate_string(data) end,
+        field_b: fn data -> Dredd.validate_number(data, :integer) end
+      }
+
+      assert %Dataset{
+               data: ^value,
+               valid?: true,
+               error: nil
+             } = Dredd.validate_map(value, structure)
+    end
+
+    test "correctly handles valid structs" do
+      value = %TestStruct{
         field_a: "string",
         field_b: 100
       }
