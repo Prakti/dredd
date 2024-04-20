@@ -4,9 +4,9 @@ defmodule Dredd.MixProject do
   def project do
     [
       app: :dredd,
-      description: "Dredd judges your structs. Validate arbitrary data in Elixir",
+      description: "Dredd judges your data. Use it to  yalidate arbitrary Elixir data.",
       version: "2.0.1",
-      elixir: "~> 1.13",
+      elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
@@ -28,12 +28,12 @@ defmodule Dredd.MixProject do
 
   defp deps do
     [
-      {:dialyxir, "~> 1.2.0", only: :dev, runtime: false},
+      {:dialyxir, ">= 1.4.0", only: :dev, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:stream_data, "~> 0.5.0", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:ex_check, "~> 0.15.0", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:ex_check, ">= 0.15.0", only: [:dev, :test], runtime: false},
+      {:excoveralls, ">= 0.18.0", only: :test}
     ]
   end
 

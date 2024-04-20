@@ -18,7 +18,7 @@ defmodule Dredd.Validators.String do
     dataset = Dataset.new(dataset)
     value = dataset.data
 
-    if String.valid?(value) do
+    if is_binary(value) && String.valid?(value) do
       opts =
         opts
         |> Keyword.put_new(:count, :graphemes)

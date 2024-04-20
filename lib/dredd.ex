@@ -1,7 +1,7 @@
 defmodule Dredd do
   @moduledoc """
   Dredd judges data for you. It's a validator for a wide range of
-  datastructures. 
+  datastructures.
 
   See the [README][1] for a detailed guide.
 

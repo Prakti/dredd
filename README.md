@@ -1,14 +1,15 @@
 # Dredd
-Dredd judges data for you. It's a validator for a wide range of possibilities.
+Dredd judges your data. It can validate arbitrary Elixir data with arbitrary deep nesting.
 
-datastructures. 
-Started as a frok of [Justify][2] it's been rewritten to handle plain values
-as well as deeply nested structures and return understandable
-error-structures.
+Started as a fork of [Justify][2], dredd is a total rewrite to handle plain values
+as well as deeply nested structures and return parseable error-structures.
 
-Following in the footsteps of [Ecto.Changeset][1], Dredd allows you to pipe
-values into a series of validation functions using a simple and familiar API. No
-schemas or casting required.
+Similar to [Ecto.Changeset][1], Dredd does not use a schema and a lot of metaprogramming magic.
+Everything is done by composing or piping functions. Dredd excels in use-cases, where you want
+to either avoid Ecto as a dependency, and/or where you want to validate deeply nested datastructures.
+
+Dredd boasts an extensive test-suite, using property-based tests to verify its capabilities across
+all possible input data. There should only be a very small amount of unspecified behaviour in Dredd.
 
 [1]: https://hexdocs.pm/ecto/Ecto.Changeset.html
 [2]: https://github.com/malomohq/justify
@@ -49,12 +50,12 @@ fails.
 
 ## Validating Lists
 
-To ramp up the complexits: you can validate all elements of a list by handing 
-a validation function to `Dredd.validate_list/3`. 
+To ramp up the complexity: you can validate all elements of a list by handing
+a validation function to `Dredd.validate_list/3`.
 
 ### Simple List Example
 
-This is how you would validate a list of strings. 
+This is how you would validate a list of strings.
 
 ```elixir
 iex(2)> Dredd.validate_list(["string", -1, "string", 0], &Dredd.validate_string/1)
@@ -92,9 +93,9 @@ This distinction is meant to help with parsing the errors of nested validations.
 
 ### Complex List Example
 
-You can exploit the fact that cou can pipe the output of all validator
+You can exploit the fact that you can pipe the output of all validator
 functions into the next one and compose chain together multiple values for
-the elements of your list. 
+the elements of your list.
 
 ```elixir
 iex> item_validator = fn data ->
@@ -178,9 +179,9 @@ If the give value is not a valid map the `Dredd.Dataset` will contain a
 
 
 If the validations on field-level failed the `Dredd.Dataset` will contain `Dredd.MapErrors`.
-The keys in that map are the fieldnames of the invalid fields. The values in the map can be 
+The keys in that map are the fieldnames of the invalid fields. The values in the map can be
 `Dredd.SingleError`, `Dredd.ListErrors` or `Dredd.MapErrors` depending on the
-valdiator of that field.
+validator of that field.
 
 This distinction is meant to help with parsing the errors of nested validations.
 

@@ -34,7 +34,7 @@ defmodule Dredd.Validators.StringTest do
 
     property "correctly differentiates between strings and other data" do
       check all(data <- term()) do
-        if String.valid?(data) do
+        if is_binary(data) && String.valid?(data) do
           assert %Dataset{
                    data: ^data,
                    error: nil,

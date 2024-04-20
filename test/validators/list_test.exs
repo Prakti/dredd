@@ -49,7 +49,7 @@ defmodule Dredd.Validators.ListTest do
           data
           |> Enum.with_index()
           |> Enum.reduce(%{}, fn {item, index}, errors ->
-            if String.valid?(item) do
+            if is_binary(item) && String.valid?(item) do
               errors
             else
               Map.put(errors, index, %SingleError{
