@@ -16,14 +16,14 @@ defmodule Dredd.Validators.Email do
 
     message = Keyword.get(opts, :message, @default_message)
 
-    if is_email?(value) do
+    if email?(value) do
       dataset
     else
       Dredd.set_single_error(dataset, message, :email)
     end
   end
 
-  defp is_email?(value) do
+  defp email?(value) do
     if is_binary(value) and String.valid?(value) do
       value =~ @email_regex
     else

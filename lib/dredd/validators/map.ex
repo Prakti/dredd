@@ -45,7 +45,7 @@ defmodule Dredd.Validators.Map do
     result =
       case field_spec do
         {:optional, validator} ->
-          is_null_or_validate(value, validator)
+          maybe_null_or_validate(value, validator)
 
         validator ->
           validator.(value)
@@ -58,7 +58,7 @@ defmodule Dredd.Validators.Map do
     end
   end
 
-  defp is_null_or_validate(value, validator) do
+  defp maybe_null_or_validate(value, validator) do
     if value == nil || value == "" do
       %Dataset{data: value, valid?: true, error: nil}
     else

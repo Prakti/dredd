@@ -20,7 +20,7 @@ defmodule Dredd.Validators.NanoID do
 
     length = Keyword.get(opts, :length, @default_length)
 
-    if is_nanoid?(value) do
+    if nanoid?(value) do
       if String.length(value) == length do
         dataset
       else
@@ -35,7 +35,7 @@ defmodule Dredd.Validators.NanoID do
     end
   end
 
-  defp is_nanoid?(value) do
+  defp nanoid?(value) do
     if is_binary(value) do
       value =~ @nanoid_regex
     else

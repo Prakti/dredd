@@ -14,14 +14,14 @@ defmodule Dredd.Validators.UUID do
 
     data = dataset.data
 
-    if is_uuid?(data) do
+    if uuid?(data) do
       dataset
     else
       Dredd.set_single_error(dataset, @default_message, :uuid)
     end
   end
 
-  defp is_uuid?(value) do
+  defp uuid?(value) do
     if is_binary(value) do
       value =~ @uuid_regex
     else
