@@ -104,12 +104,14 @@ defmodule Dredd.Validators.MapTest do
     test "correctly handles valid structs with optional fields" do
       value = %{
         field_a: nil,
-        field_b: 100
+        field_b: 100,
+        field_c: "fooo"
       }
 
       structure = %{
         field_a: {:optional, fn data -> Dredd.validate_string(data) end},
-        field_b: fn data -> Dredd.validate_number(data, :integer) end
+        field_b: fn data -> Dredd.validate_number(data, :integer) end,
+        field_c: {:optional, fn data -> Dredd.validate_string(data) end},
       }
 
       assert %Dataset{

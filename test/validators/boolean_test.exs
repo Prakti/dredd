@@ -63,6 +63,24 @@ defmodule Dredd.Validators.BooleanTest do
       end
     end
 
+    test "correctly compares boolean values against expected values" do
+      assert %Dataset{
+               data: true,
+               error: nil,
+               valid?: true
+             } = Dredd.validate_boolean(true, is: true)
+
+      assert %Dataset{
+               data: false,
+               error: %SingleError{
+                        validator: :boolean,
+                        message: "expected value: %{expected}",
+                        metadata: %{kind: :value, expected: true}
+                      },
+               valid?: false
+             } = Dredd.validate_boolean(false, is: true)
+    end
+
     test "adds an error if `nil` is given" do
       data = nil
 
