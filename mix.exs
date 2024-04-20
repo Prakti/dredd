@@ -6,7 +6,7 @@ defmodule Dredd.MixProject do
       app: :dredd,
       description: "Dredd judges your data. Use it to  yalidate arbitrary Elixir data.",
       version: "2.0.1",
-      elixir: "~> 1.16",
+      elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
