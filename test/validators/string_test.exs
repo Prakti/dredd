@@ -32,6 +32,44 @@ defmodule Dredd.Validators.StringTest do
              } = Dredd.validate_string(data)
     end
 
+    property "only adds an error if value is an empty string, there's a length restriction and trimming enabled" do
+      check all(
+              trim <- boolean(),
+              count <- member_of([:graphemes, :codepoints]),
+              restriction <- member_of(["min", "exact"])
+            ) do
+
+        value = "    "
+        correct_length =
+          case count do
+            :graphemes ->
+              length(String.graphemes(value))
+
+            :codepoints ->
+              length(String.codepoints(value))
+          end
+
+        opts = case restriction do
+          "min" -> [min_length: correct_length - 2, count: count, trim?: trim]
+          "exact" -> [exact_length: correct_length, count: count, trim?: trim]
+        end
+
+        if trim do
+          assert %Dataset{
+                   data: ^value,
+                   error: %Dredd.SingleError{},
+                   valid?: false
+                 } = Dredd.validate_string(value, opts)
+        else
+          assert %Dataset{
+                   data: ^value,
+                   error: nil,
+                   valid?: true
+                 } = Dredd.validate_string(value, opts)
+        end
+      end
+    end
+
     property "correctly differentiates between strings and other data" do
       check all(data <- term()) do
         if is_binary(data) && String.valid?(data) do
@@ -72,7 +110,7 @@ defmodule Dredd.Validators.StringTest do
                  data: ^value,
                  error: nil,
                  valid?: true
-               } = Dredd.validate_string(value, exact_length: correct_length, count: count)
+               } = Dredd.validate_string(value, exact_length: correct_length, count: count, trim?: false)
       end
     end
 
