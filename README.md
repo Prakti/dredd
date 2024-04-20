@@ -2,7 +2,7 @@
 Dredd judges your data. It can validate arbitrary Elixir data with arbitrary deep nesting.
 
 
-[![Build Status](https://github.com/prakti/dredd/workflows/ci/badge.svg)](https://github.com/prakti/dredd/actions) ![Hex.pm Version](https://img.shields.io/hexpm/v/dredd) [![Static Badge](https://img.shields.io/badge/hex-docs-green)](https://hexdocs.pm/dredd/readme.html)
+[![Build Status](https://github.com/prakti/dredd/workflows/ci/badge.svg)](https://github.com/prakti/dredd/actions) [![Hex.pm Version](https://img.shields.io/hexpm/v/dredd)](https://hex.pm/packages/dredd) [![Static Badge](https://img.shields.io/badge/hex-docs-green)](https://hexdocs.pm/dredd/readme.html)
 
 Started as a fork of [Justify][2], dredd is a total rewrite to handle plain values
 as well as deeply nested structures and return parseable error-structures.
