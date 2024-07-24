@@ -30,7 +30,7 @@ defmodule Dredd.MixProject do
     [
       {:dialyxir, ">= 1.4.0", only: :dev, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:stream_data, "~> 0.6.0", only: [:dev, :test]},
+      {:stream_data, "~> 1.1.0", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ex_check, ">= 0.15.0", only: [:dev, :test], runtime: false},
       {:excoveralls, ">= 0.18.0", only: :test}
