@@ -2,7 +2,7 @@ name: ci
 on: push
 jobs:
   credo:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
@@ -21,7 +21,7 @@ jobs:
         otp: ['24.x', '25.x', '26.x']
 
   dialyzer:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
@@ -40,7 +40,7 @@ jobs:
         otp: ['24.x', '25.x', '26.x']
 
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
