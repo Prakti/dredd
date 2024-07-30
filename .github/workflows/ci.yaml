@@ -18,7 +18,13 @@ jobs:
     strategy:
       matrix:
         elixir: ['1.15.x', '1.16.x', '1.17.x']
-        otp: ['25.x', '26.x', '27.x']
+        include:
+          - elixir: '1.15.x'
+            otp: ['24.x', '25.x', '26.x']
+          - elixir: '1.16.x'
+            otp: ['24.x', '25.x', '26.x']
+          - elixir: '1.17.x'
+            otp: ['25.x', '26.x', '27.x']
 
   dialyzer:
     runs-on: ubuntu-22.04
@@ -37,7 +43,13 @@ jobs:
     strategy:
       matrix:
         elixir: ['1.15.x', '1.16.x', '1.17.x']
-        otp: ['25.x', '26.x', '27.x']
+        include:
+          - elixir: '1.15.x'
+            otp: ['24.x', '25.x', '26.x']
+          - elixir: '1.16.x'
+            otp: ['24.x', '25.x', '26.x']
+          - elixir: '1.17.x'
+            otp: ['25.x', '26.x', '27.x']
 
   test:
     runs-on: ubuntu-22.04
@@ -56,5 +68,11 @@ jobs:
     strategy:
       matrix:
         elixir: ['1.15.x', '1.16.x', '1.17.x']
-        otp: ['25.x', '26.x', '27.x']
+        include:
+          - elixir: '1.15.x'
+            otp: ['24.x', '25.x', '26.x']
+          - elixir: '1.16.x'
+            otp: ['24.x', '25.x', '26.x']
+          - elixir: '1.17.x'
+            otp: ['25.x', '26.x', '27.x']
 
