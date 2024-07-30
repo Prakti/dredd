@@ -26,9 +26,9 @@ defmodule Dredd do
   ## Examples
   Simple case with data of invalid type:
   ```elixir
-  iex> Dredd.validate_boolean('foo')
+  iex> Dredd.validate_boolean("foo")
   %Dredd.Dataset{
-    data: 'foo',
+    data: "foo",
     error: %Dredd.SingleError{
       validator: :boolean,
       message: "is not a boolean",
